@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "backend for company bench sharing portal",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+
+    "scripts": {
+      "start": "node src/index.js"
+   
+    },
+  "type": "module",
   "keywords": [
     "javascript",
     "backend"

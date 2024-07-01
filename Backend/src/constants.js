@@ -1,1 +1,1 @@
-export const DB_NAME="bench sharing portal"
+export const DB_NAME="benchSharingPortal"
