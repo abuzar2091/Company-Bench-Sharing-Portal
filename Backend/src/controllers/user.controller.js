@@ -32,10 +32,10 @@ const registerUser = wrapAsyncHandler(async (req, res, next) => {
     //   //remove password and refresh token from the respone
     //   //check for the user creation
     //   //return respone
-    const { username, email, password } = req.body;
-    console.log(req.body);
+    const { username, email, password,companyId,role} = req.body;
+    console.log("body part ",req.body);
     if (
-      [username, email, password].some((field) => field?.trim() === "")
+      [username, email, password,companyId].some((field) => field?.trim() === "")
     ) {
       throw new ApiError(400, "All fields are required");
     }
@@ -49,6 +49,8 @@ const registerUser = wrapAsyncHandler(async (req, res, next) => {
       username,
       email,
       password,
+      companyId,
+      role
     });
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
         user._id

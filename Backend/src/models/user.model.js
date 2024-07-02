@@ -22,7 +22,24 @@ const userSchema = new mongoose.Schema(
         enum:["company","admin"],
         default:"company"
     },
-   
+    bookedResources: [
+        {
+          resource: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Resource',
+            required: true
+          },
+          bookedAt: {
+            type: Date,
+            default: Date.now
+          }
+        }
+      ],
+    companyId:{ 
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Company',
+       // required:true  
+       },
     password: { type: String,trim: true, required: [true, "Password is required"] },
     refreshToken: {
       type: String,
