@@ -42,7 +42,36 @@ const addResource=wrapAsyncHandler(async(req,res,next)=>{
     },
          "Resource added successfully"))
 })
+
+const updateResource=wrapAsyncHandler(async(req,res)=>{
+    const {resourceId,type,description,count}=req.body;
+    console.log(req.body);
+    if (!resourceId) {
+        throw new ApiError(400, "Resource ID is required");
+      }
+      const updateFields = {};
+      if (type) updateFields.type = type;
+      if (description) updateFields.description = description;
+      if (count !== undefined) updateFields.count = count;
+    const updatedResource=await Resource.findByIdAndUpdate(resourceId,
+        updateFields,
+        { new: true, runValidators: true }
+        
+    )
+    return res.status(200).json(new ApiResponse(200,{updatedResource},"Resource Updated Successfully"));
+})
+const deleteResource=wrapAsyncHandler(async(req,res)=>{
+    const {resourceId}=req.body;
+    if (!resourceId) {
+        throw new ApiError(400, "Resource ID is required");
+      }
+      
+    const deletedResource=await Resource.findByIdAndDelete(resourceId)
+    return res.status(200).json(new ApiResponse(200,{deletedResource},"Resource deleted Successfully"));
+})
 export{
     addResource,
-    createCompany
+    createCompany,
+    updateResource,
+    deleteResource  
 }
