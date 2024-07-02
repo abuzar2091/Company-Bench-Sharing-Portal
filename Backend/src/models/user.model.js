@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
             ref: 'Resource',
             required: true
           },
+          countToBook:{
+            type:Number,
+            default:1
+          },
           bookedAt: {
             type: Date,
             default: Date.now

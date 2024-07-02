@@ -1,4 +1,7 @@
 
+import { Booking } from "../models/booking.model.js";
+import { Company } from "../models/company.model.js";
+import Resource from "../models/resource.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -118,7 +121,54 @@ const loginUser = wrapAsyncHandler(async (req, res) => {
       );
   });
 
+const bookResource =wrapAsyncHandler(async(req,res)=>{
+    const {resourceId,count}=req.body;
+    if(!resourceId){
+        throw new ApiError(404,"Invalid resourceId")
+    }
+    const resource=await Resource.findById(resourceId);
+    if(!resource) throw new ApiError(404,"Resource not found");
+    const bookedBy=req.user;
+    const companyId=resource.companyId;
+    const user=await User.findById(req.user._id);
+    const bookedResource=await Resource.bookResource(user,count);
+    if(bookedResource>0){
+        const booking=await Booking.create({
+            resourceId,
+            bookedBy,
+            companyId,
+            countToBook:bookedResource
+        })
+        return res.status(200).json(new ApiResponse(200,{booking},"Resource Successfully Booked"));
+    }else{
+        return res.status(404).json(new ApiResponse(404,{},"Empty stock"));
+    }
+
+});
+const releaseResource =wrapAsyncHandler(async(req,res)=>{
+    const {resourceId,count}=req.body;
+    if(!resourceId){
+        throw new ApiError(404,"Invalid resourceId")
+    }
+    const resource=await Resource.findById(resourceId);
+    if(!resource) throw new ApiError(404,"Resource not found");
+  //  const bookedBy=req.user;
+  //  const companyId=resource.companyId;
+    const user=await User.findById(req.user._id);
+    const isReleasedResource=await Resource.relaseResource(user,count);
+    if(isReleasedResource){
+        const booking=await Booking.findByIdAndDelete({
+            resourceId
+        })
+        return res.status(200).json(new ApiResponse(200,{booking},"Resource Successfully Released"));
+    }else{
+        return res.status(404).json(new ApiResponse(404,{},"Resource Successfully Released"));
+    }
+
+});
 export{
     registerUser,
-    loginUser
+    loginUser,
+    bookResource,
+    releaseResource
 }  

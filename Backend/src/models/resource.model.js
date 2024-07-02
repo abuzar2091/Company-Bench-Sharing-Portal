@@ -25,6 +25,10 @@ const resourceSchema = new mongoose.Schema({
         ref: 'User',
         required: true
       },
+      countToBook:{
+        type:Number,
+        default:1
+      },
       bookedAt: {
         type: Date,
         default: Date.now
@@ -41,48 +45,60 @@ const resourceSchema = new mongoose.Schema({
   }
 });
 
-resourceSchema.methods.bookResource = async function(user) {
+resourceSchema.methods.bookResource = async function(user,countToBook) {
   if (this.count > 0) {
-    this.bookedBy.push({ user });
-    this.count -= 1;
+      const booking=Math.min(this.count,countToBook);
+      this.bookedBy.push({ user,countToBook:booking });
+    this.count -= booking;
     if(this.count==0){
         this.status="booked"
         this.availableFrom=null
     }
     await this.save();
 
-    user.bookedResources.push({ resource: this._id });
+    user.bookedResources.push({ resource: this._id,countToBook:booking });
     await user.save();
     
-    return true;
+    return booking;
   }
-  return false;
+  return 0;
 };
 
-resourceSchema.methods.releaseResource = async function(user) {
+resourceSchema.methods.releaseResource = async function(user,countToRelease) {
   const bookingIndex = this.bookedBy.findIndex(
     (booking) => booking.user.toString() === user._id.toString()
   );
+  const isReleasedResourceDelete=0;
   if (bookingIndex !== -1) {
-    this.bookBy.splice(bookingIndex, 1);
-    this.count += 1;
+    this.bookedBy[bookingIndex].countToBook -= countToRelease;
+    if (this.bookedBy[bookingIndex].countToBook <= 0) {
+        this.bookedBy.splice(bookingIndex, 1);
+      }
+    this.count += countToRelease;
     if(this.count>=1){
         this.status="available"
-        this.availableFrom=Date.now
+        if(this.availableFrom===null){
+            this.availableFrom=Date.now
+        }
     }
     await this.save();
-
     const userBookingIndex = user.bookedResources.findIndex(
-      (booking) => booking.resource.toString() === this._id.toString()
-    );
+        (booking) => booking.resource.toString() === this._id.toString()
+      );
     if (userBookingIndex !== -1) {
-      user.bookedResources.splice(userBookingIndex, 1);
-      await user.save();
-    }
+        user.bookedResources[userBookingIndex].countToBook -= countToRelease;
+  
+        if (user.bookedResources[userBookingIndex].countToBook <= 0) {
+            isReleasedResourceDelete=1;
+          user.bookedResources.splice(userBookingIndex, 1);
+        }
+        
+        await user.save();
+      }
 
-    return true;
+    return isReleasedResourceDelete;
   }
-  return false;
+  return 0;
 };
 
 const Resource = mongoose.model('Resource', resourceSchema);
