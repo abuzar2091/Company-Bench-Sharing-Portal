@@ -46,20 +46,35 @@ const resourceSchema = new mongoose.Schema({
 });
 
 resourceSchema.methods.bookResource = async function(user,countToBook) {
+    const userBookingIndex = user.bookedResources.findIndex(
+        (booking) => booking.resource.toString() === this._id.toString()
+      );
+     
   if (this.count > 0) {
       const booking=Math.min(this.count,countToBook);
-      this.bookedBy.push({ user,countToBook:booking });
+      const existingBooking = this.bookedBy.find(b => b.user.toString() === user._id.toString());
+      if (existingBooking) {
+        existingBooking.countToBook += booking;
+      } else {
+        this.bookedBy.push({ user, countToBook: booking });
+      }
+     
     this.count -= booking;
-    if(this.count==0){
+    if(this.count===0){
         this.status="booked"
         this.availableFrom=null
     }
     await this.save();
+    const userBooking = user.bookedResources.find(b => b.resource.toString() === this._id.toString());
+    if (userBooking) {
+      userBooking.countToBook += booking;
+    } else {
+      user.bookedResources.push({ resource: this._id, countToBook: booking });
+    }
 
-    user.bookedResources.push({ resource: this._id,countToBook:booking });
     await user.save();
     
-    return booking;
+    return  booking;
   }
   return 0;
 };
@@ -68,9 +83,9 @@ resourceSchema.methods.releaseResource = async function(user,countToRelease) {
   const bookingIndex = this.bookedBy.findIndex(
     (booking) => booking.user.toString() === user._id.toString()
   );
-  const isReleasedResourceDelete=0;
+  let isReleasedResource=0;
   if (bookingIndex !== -1) {
-    this.bookedBy[bookingIndex].countToBook -= countToRelease;
+   this.bookedBy[bookingIndex].countToBook -= countToRelease;
     if (this.bookedBy[bookingIndex].countToBook <= 0) {
         this.bookedBy.splice(bookingIndex, 1);
       }
@@ -78,7 +93,7 @@ resourceSchema.methods.releaseResource = async function(user,countToRelease) {
     if(this.count>=1){
         this.status="available"
         if(this.availableFrom===null){
-            this.availableFrom=Date.now
+            this.availableFrom=Date.now()
         }
     }
     await this.save();
@@ -89,18 +104,16 @@ resourceSchema.methods.releaseResource = async function(user,countToRelease) {
         user.bookedResources[userBookingIndex].countToBook -= countToRelease;
   
         if (user.bookedResources[userBookingIndex].countToBook <= 0) {
-            isReleasedResourceDelete=1;
           user.bookedResources.splice(userBookingIndex, 1);
         }
         
         await user.save();
       }
-
-    return isReleasedResourceDelete;
+      isReleasedResource=1;
+    return isReleasedResource;
   }
-  return 0;
+  return isReleasedResource;
 };
 
-const Resource = mongoose.model('Resource', resourceSchema);
+export const Resource = mongoose.model('Resource', resourceSchema);
 
-export default Resource;

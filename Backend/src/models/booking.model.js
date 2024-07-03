@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 const bookingSchema = new mongoose.Schema({
     resourceId :{
-        type:String,
-        required:true
+        type:mongoose.Schema.Types.ObjectId,
+       ref:'Resource',
+       required:true 
     },
-    bookedId:{
+    bookedBy:{
      type:mongoose.Schema.Types.ObjectId,
      ref:'User',
      required:true  

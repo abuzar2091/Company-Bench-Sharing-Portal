@@ -1,8 +1,9 @@
 
 import { Booking } from "../models/booking.model.js";
 import { Company } from "../models/company.model.js";
-import Resource from "../models/resource.model.js";
+import { Resource } from "../models/resource.model.js";
 import { User } from "../models/user.model.js";
+import { VerifyUser } from "../models/verifyuser.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import wrapAsyncHandler from "../utils/wrapAsyncHandler.js";
@@ -27,58 +28,58 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
   };
 
-const registerUser = wrapAsyncHandler(async (req, res, next) => {
-    //   //get the user info from frontend
-    //   //perform validation--not empty
-    //   //check if user already exits:username ,email
-    //   // create user obj and save in db
-    //   //remove password and refresh token from the respone
-    //   //check for the user creation
-    //   //return respone
-    const { username, email, password,companyId,role} = req.body;
-    console.log("body part ",req.body);
-    if (
-      [username, email, password,companyId].some((field) => field?.trim() === "")
-    ) {
-      throw new ApiError(400, "All fields are required");
-    }
-    const exitedUser = await User.findOne({
-      $or: [{ username }, { email }],
-    });
-    if (exitedUser) {
-      throw new ApiError(409, "User with username or email already exits");
-    }
-    const user = await User.create({
-      username,
-      email,
-      password,
-      companyId,
-      role
-    });
-    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-        user._id
-      );
+// const registerUser = wrapAsyncHandler(async (req, res, next) => {
+//     //   //get the user info from frontend
+//     //   //perform validation--not empty
+//     //   //check if user already exits:username ,email
+//     //   // create user obj and save in db
+//     //   //remove password and refresh token from the respone
+//     //   //check for the user creation
+//     //   //return respone
+//     const { username, email, password,companyId,role} = req.body;
+//     console.log("body part ",req.body);
+//     if (
+//       [username, email, password,companyId].some((field) => field?.trim() === "")
+//     ) {
+//       throw new ApiError(400, "All fields are required");
+//     }
+//     const exitedUser = await User.findOne({
+//       $or: [{ username }, { email }],
+//     });
+//     if (exitedUser) {
+//       throw new ApiError(409, "User with username or email already exits");
+//     }
+//     const user = await User.create({
+//       username,
+//       email,
+//       password,
+//       companyId,
+//       role
+//     });
+//     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+//         user._id
+//       );
 
-      const createdUser = await User.findById(user._id).select(
-        "-password  -refreshToken"
-      );
+//       const createdUser = await User.findById(user._id).select(
+//         "-password  -refreshToken"
+//       );
     
-      const options = {
-        httpOnly: true,
-        secure: true,
-      };
-      return res
-        .status(201)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json(
-          new ApiResponse(
-            200,
-            { createdUser },
-            "User Registered Successfully"
-          )
-        );
-  });
+//       const options = {
+//         httpOnly: true,
+//         secure: true,
+//       };
+//       return res
+//         .status(201)
+//         .cookie("accessToken", accessToken, options)
+//         .cookie("refreshToken", refreshToken, options)
+//         .json(
+//           new ApiResponse(
+//             200,
+//             { createdUser },
+//             "User Registered Successfully"
+//           )
+//         );
+//   });
 
 const loginUser = wrapAsyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -121,54 +122,118 @@ const loginUser = wrapAsyncHandler(async (req, res) => {
       );
   });
 
-const bookResource =wrapAsyncHandler(async(req,res)=>{
-    const {resourceId,count}=req.body;
+const bookResources =wrapAsyncHandler(async(req,res)=>{
+       const {resourceId,count}=req.body;
+ console.log(req.body);
+  const userId=req.user._id
     if(!resourceId){
         throw new ApiError(404,"Invalid resourceId")
     }
+    console.log("res id",resourceId);
     const resource=await Resource.findById(resourceId);
     if(!resource) throw new ApiError(404,"Resource not found");
-    const bookedBy=req.user;
+    const bookedBy=userId;
     const companyId=resource.companyId;
-    const user=await User.findById(req.user._id);
-    const bookedResource=await Resource.bookResource(user,count);
-    if(bookedResource>0){
-        const booking=await Booking.create({
+    const user=await User.findById(bookedBy);
+    const bookedResource=await resource.bookResource(user,count);
+    if (bookedResource > 0) {
+        let booking = await Booking.findOne({ resourceId, bookedBy });
+    
+        if (booking) {
+          booking.countToBook += bookedResource;
+          await booking.save();
+        } else {
+          booking = await Booking.create({
             resourceId,
             bookedBy,
             companyId,
-            countToBook:bookedResource
-        })
+            countToBook: bookedResource
+          });
+        }
         return res.status(200).json(new ApiResponse(200,{booking},"Resource Successfully Booked"));
     }else{
         return res.status(404).json(new ApiResponse(404,{},"Empty stock"));
     }
 
 });
-const releaseResource =wrapAsyncHandler(async(req,res)=>{
+const releaseResources =wrapAsyncHandler(async(req,res)=>{
     const {resourceId,count}=req.body;
     if(!resourceId){
         throw new ApiError(404,"Invalid resourceId")
     }
+    // const resourceId="6683ac1ada20ed52db6b306d";
+    // const count=2;
+    // const bookedBy="668397766e90ee3421f075a0"
+    const bookedBy=req.user?._id;
     const resource=await Resource.findById(resourceId);
     if(!resource) throw new ApiError(404,"Resource not found");
-  //  const bookedBy=req.user;
-  //  const companyId=resource.companyId;
-    const user=await User.findById(req.user._id);
-    const isReleasedResource=await Resource.relaseResource(user,count);
-    if(isReleasedResource){
-        const booking=await Booking.findByIdAndDelete({
-            resourceId
-        })
+    const user=await User.findById(bookedBy);
+    const isReleasedResource=await resource.releaseResource(user,count);
+    console.log(isReleasedResource ,"beta");
+    if(isReleasedResource===1){
+        let booking = await Booking.findOne({ resourceId, bookedBy });
+        console.log("booking ",booking);
+        if (booking) {
+          booking.countToBook -= count;
+          await booking.save();
+          console.log("booking ",booking);
+          if(booking.countToBook===0){
+            await Booking.findByIdAndDelete(booking._id);
+         }
         return res.status(200).json(new ApiResponse(200,{booking},"Resource Successfully Released"));
-    }else{
+    }
+}else{
         return res.status(404).json(new ApiResponse(404,{},"Resource Successfully Released"));
     }
 
 });
+
+
+
+//   //get the user info from frontend
+//   //perform validation--not empty
+//   //check if user already exits:username ,email
+//   // create user obj and save in db
+//   //remove password and refresh token from the respone
+//   //check for the user creation
+//   //return respone
+const verificationUser = wrapAsyncHandler(async (req, res, next) => {
+    const {username, email, password,companyId,role} = req.body;
+    console.log("body part ",req.body);
+    if (
+      [username, email, password,companyId].some((field) => field?.trim() === "")
+    ) {
+      throw new ApiError(400, "All fields are required");
+    }
+    const exitedUser = await VerifyUser.findOne({
+      $or: [{ username }, { email }],
+    });
+    if (exitedUser) {
+      throw new ApiError(409, "User with username or email already exits");
+    }
+    const user = await VerifyUser.create({
+      username,
+      email,
+      password,
+      companyId,
+      role
+    });
+      const createdUser = await VerifyUser.findById(user._id);
+      return res
+        .status(201)
+        .json(
+          new ApiResponse(
+            200,
+            { createdUser },
+            "Registration request submitted. Awaiting admin approval."
+          )
+        );
+  });
+
 export{
-    registerUser,
+    // registerUser,
     loginUser,
-    bookResource,
-    releaseResource
+    bookResources,
+    releaseResources,
+    verificationUser
 }  
