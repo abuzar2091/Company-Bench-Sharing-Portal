@@ -6,6 +6,7 @@ import { VerifyUser } from "../models/verifyuser.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import wrapAsyncHandler from "../utils/wrapAsyncHandler.js";
+import { Booking } from "../models/booking.model.js";
 
 const createCompany=wrapAsyncHandler(async(req,res,next)=>{
     const {companyName,adminId,description,location}=req.body;
@@ -81,7 +82,7 @@ const addResource=wrapAsyncHandler(async(req,res,next)=>{
     );
   
     if (!updatedResource) {
-      throw new ApiError(404, "Resource not found");
+      throw new ApiError(404, "resource not found");
     }
   
     return res.status(200).json(new ApiResponse(200, { updatedResource }, "Resource Updated Successfully"));
@@ -89,15 +90,19 @@ const addResource=wrapAsyncHandler(async(req,res,next)=>{
 
 
 const deleteResource = wrapAsyncHandler(async (req, res) => {
-    const { resourceId } = req.body;
+    const { id:resourceId } = req.params;
     if (!resourceId) {
-      throw new ApiError(400, "Resource ID is required");
+      throw new ApiError(400, "resource ID is required");
+    }
+    if (!mongoose.Types.ObjectId.isValid(resourceId)) {
+      throw new ApiError(400, "Invalid Resource ID");
     }
   
     // Find the resource to be deleted
+
     const resource = await Resource.findById(resourceId);
     if (!resource) {
-      throw new ApiError(404, "Resource not found");
+      throw new ApiError(404, "resource not found");
     }
   
     // Find all users who have booked this resource
