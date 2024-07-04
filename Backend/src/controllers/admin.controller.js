@@ -181,7 +181,22 @@ const getUnverifiedUser=wrapAsyncHandler(async(req,res)=>{
   }
   return res.status(201).json(new  ApiResponse(201,unverifiedUser,"all unverified user fetched successfully"));
 
-})  
+})
+
+const getAddedResource=wrapAsyncHandler(async(req,res)=>{
+ 
+  const admin=await User.findById(req.user?._id);
+  if(!admin){
+    return res.status(404).json(new ApiResponse(404,{},"Resource cannot be retrived. Admin not logged in."))
+  }
+  const resource=await Resource.find({companyId:new mongoose.Types.ObjectId(admin.companyId)});
+
+  if(!resource){
+    return res.status(404).json(new ApiResponse(404,{},"Resource not found"))
+  }
+  return res.status(200).json(new ApiResponse(200,{resource},"Resource fetched successfully"));
+
+})
   
   
 export{
@@ -190,5 +205,6 @@ export{
     updateResource,
     deleteResource,
     toVerifyEmployee,
-    getUnverifiedUser
+    getUnverifiedUser,
+    getAddedResource
 }

@@ -33,14 +33,16 @@ function AdminPanel() {
  
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex   flex-col min-h-screen ">
       <h1 className="text-center font-semibold text-3xl">Admin Panel</h1>
-       <div className='flex justify-between'>
-      <div className='flex flex-col bg-blue-300 sm:w-[30%] h-[200px] sm:ml-4  w-[70%] ml-4 rounded-lg justify-around'>
+       <div className='flex justify-between  xs:flex-row flex-col'>
+
+      <div className='flex flex-col bg-blue-300 sm:w-[40%] h-[200px] sm:ml-4  w-[50%] ml-4 rounded-lg justify-around'>
       <h2 className='text-white font-semibold text-center'>Unverified Users Request {unverifiedUser?.data?.length}</h2>
       <Button onClick={handleVerifyUser}>Verify User</Button>
       </div>
-      <div className='flex gap-4 mr-4'>
+
+      <div className='flex sm:flex-row  gap-4 m-4 flex-col'>
         <Button onClick={seeAllResource}>See All Resources</Button>
         <Button onClick={addResource}>Add Resource</Button>
       </div>
