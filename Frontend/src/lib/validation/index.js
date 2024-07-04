@@ -12,5 +12,5 @@ export const SignInValidation = z.object({
 export const AddResourceValidation = z.object({
      type: z.string().min(3,{message:"To Short"}),
      description: z.string().min(5,{message:"To Short"}),
-     count:z.string().min(1)
+     count:z.string()
   });  

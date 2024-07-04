@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 function SeeAllResource() {
     const [loading,setLoading]=useState(true);
     const [addedResource,setAddedReSource]=useState();
+    const navigate = useNavigate();
     useEffect(()=>{
         const getAddedResource=async()=>{
           await axios.get("/api/v1/admin/getaddedresource")
@@ -19,27 +21,32 @@ function SeeAllResource() {
         }
         getAddedResource();
     },[])
-
- loading && 
- <div className='min-h-screen flex flex-col items-center'>
+    const updateResource = (resource) => {
+        console.log("res ",resource);
+        navigate('/admin/update-resource', { state:  {resource}  });
+      };
+    
+ if(loading){ 
+ return (<div className='min-h-screen flex flex-col items-center'>
     <h1>See All Resource</h1>
     <p className=''>Loading Resources....</p>
-</div>
+</div>);
+ }
 
   return (
     <div className='flex flex-col w-full min-h-screen'>
         <h1 className='text-center font-semibold text-3xl'>See All Resource</h1>
-        <div className='grid grid-cols-3 gap-4 m-8'>
+        <div className='grid lg:grid-cols-3 sm:grid-cols-2 gap-4 xs:m-8 m-6'>
         {
             addedResource?.map((resource)=>(
-                <div className='flex flex-col gap-2 text-white text-center p-8  bg-blue-400 rounded-lg'>
+                <div key={resource?._id} className='flex flex-col gap-2 text-white text-center sm:p-8  p-3 bg-blue-400 rounded-lg'>
                   <p>Type: {resource.type}</p>
                   <p>Description: {resource.description}</p>
                   <p>Count: {resource.count}</p>
                   <p>Status: {resource.status}</p>
                   <div className='flex justify-between '>
-                  <button className='bg-green-600 rounded-lg py-2 px-4'>Update</button>
-                  <Button>Delete</Button>
+                  <button onClick={()=>updateResource({resource})} className='bg-green-600 rounded-lg py-2 px-4'>Update</button>
+                  <Button onClick={()=>deleteResource(resource?._id)}>Delete</Button>
                   </div>
                 </div>
             ))

@@ -52,23 +52,42 @@ const addResource=wrapAsyncHandler(async(req,res,next)=>{
          "Resource added successfully"))
 })
 
-const updateResource=wrapAsyncHandler(async(req,res)=>{
-    const {resourceId,type,description,count}=req.body;
-    console.log(req.body);
+  const updateResource = wrapAsyncHandler(async (req, res) => {
+    const { type, description, count } = req.body;
+    const { id: resourceId } = req.params; // Ensure correct destructuring
+    console.log("req body ", req.body);
+  
     if (!resourceId) {
-        throw new ApiError(400, "Resource ID is required");
-      }
-      const updateFields = {};
-      if (type) updateFields.type = type;
-      if (description) updateFields.description = description;
-      if (count !== undefined) updateFields.count = count;
-    const updatedResource=await Resource.findByIdAndUpdate(resourceId,
-        updateFields,
-        { new: true, runValidators: true }
-        
-    )
-    return res.status(200).json(new ApiResponse(200,{updatedResource},"Resource Updated Successfully"));
-})
+      throw new ApiError(400, "Resource ID is required");
+    }
+  
+    // const countAsNumber = parseInt(count);
+    // if (isNaN(countAsNumber)) {
+    //   throw new ApiError(400, "Count must be a valid number");
+    // }
+  
+    if (!mongoose.Types.ObjectId.isValid(resourceId)) {
+      throw new ApiError(400, "Invalid Resource ID");
+    }
+  
+    const updatedResource = await Resource.findByIdAndUpdate(
+      resourceId,
+      {
+        type,
+        description,
+        count,
+      },
+      { new: true, runValidators: true }
+    );
+  
+    if (!updatedResource) {
+      throw new ApiError(404, "Resource not found");
+    }
+  
+    return res.status(200).json(new ApiResponse(200, { updatedResource }, "Resource Updated Successfully"));
+  });
+
+
 const deleteResource = wrapAsyncHandler(async (req, res) => {
     const { resourceId } = req.body;
     if (!resourceId) {
@@ -173,18 +192,15 @@ const toVerifyEmployee = wrapAsyncHandler(async (req, res, next) => {
   });
 
 const getUnverifiedUser=wrapAsyncHandler(async(req,res)=>{
-  
   const unverifiedUser=await VerifyUser.find({});
   console.log(unverifiedUser);
   if(!unverifiedUser){
     return res.status(201).json(new  ApiResponse(201,{},"No New Request"));
   }
   return res.status(201).json(new  ApiResponse(201,unverifiedUser,"all unverified user fetched successfully"));
-
 })
 
 const getAddedResource=wrapAsyncHandler(async(req,res)=>{
- 
   const admin=await User.findById(req.user?._id);
   if(!admin){
     return res.status(404).json(new ApiResponse(404,{},"Resource cannot be retrived. Admin not logged in."))

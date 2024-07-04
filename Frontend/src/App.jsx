@@ -8,6 +8,7 @@ import VerifyEmployee from "./admin/VerifyEmployee"
 import AdminRoute from "./admin/AdminRoute.jsx"
 import AddResource from "./admin/AddResource"
 import SeeAllResource from "./admin/SeeAllResource"
+import UpdateResource from "./admin/UpdateResource"
 
 function App() {
  
@@ -39,6 +40,14 @@ function App() {
             element={
               <AdminRoute>
                 <AddResource/> 
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/update-resource" 
+            element={
+              <AdminRoute>
+                <UpdateResource/> 
               </AdminRoute>
             } 
           />
