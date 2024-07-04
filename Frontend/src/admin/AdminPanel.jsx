@@ -24,6 +24,12 @@ function AdminPanel() {
   const handleVerifyUser = () => {
     navigate('/admin/verifyemployee', { state: { unverifiedUser } });
   };
+  const addResource = () => {
+    navigate('/admin/add-resource');
+  };
+  const seeAllResource=()=>{
+    navigate("/admin/allresources");
+  }
  
 
   return (
@@ -35,7 +41,7 @@ function AdminPanel() {
       <Button onClick={handleVerifyUser}>Verify User</Button>
       </div>
       <div className='flex gap-4 mr-4'>
-        <Button>See All Resources</Button>
+        <Button onClick={seeAllResource}>See All Resources</Button>
         <Button onClick={addResource}>Add Resource</Button>
       </div>
       </div> 

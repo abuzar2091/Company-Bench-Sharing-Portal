@@ -11,7 +11,8 @@ const resourceSchema = new mongoose.Schema({
   count: {
     type: Number,
     required: true,
-     default:1
+    min:1,
+    default:1
   },
   companyId:{
     type: mongoose.Schema.Types.ObjectId,

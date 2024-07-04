@@ -28,18 +28,24 @@ const createCompany=wrapAsyncHandler(async(req,res,next)=>{
 })
 const addResource=wrapAsyncHandler(async(req,res,next)=>{
 
-    const {type,description,count,companyId}=req.body;
+    const {type,description,count}=req.body;
     if (
-        [type,description,companyId].some((field) => field?.trim() === "")
+        [type,description].some((field) => field?.trim() === "")
       ) {
         throw new ApiError(400, "All fields are required");
       }
+    const admin=await User.findById(req.user?._id);
+    if(!admin){
+      return res.status(404).json(new ApiResponse(404,{},"Resource cannot be added. Admin not logged in."))
+    }
+    console.log("admin company ",admin);
     const resource=await Resource.create({
         type,
         description,
         count,
-        companyId
+        companyId:new mongoose.Types.ObjectId(admin.companyId)
     })
+    console.log(resource);
     return res.status(201).json(new ApiResponse(201,{
         resource
     },
@@ -122,21 +128,21 @@ const deleteResource = wrapAsyncHandler(async (req, res) => {
 //     )
 // })  
 const toVerifyEmployee = wrapAsyncHandler(async (req, res, next) => {
-    const { userId, companyId } = req.body;
+    const {employeeId, companyId } = req.body;
     console.log("companyId ", req.user?.companyId);
     const company=await Company.findOne({
-        adminId:new mongoose.Types.ObjectId(req.user?._id)
+        adminId:new mongoose.Types.ObjectId( req.user?._id)
     })
     
 
-    const pendingUser = await VerifyUser.findById(userId);
+    const pendingUser = await VerifyUser.findById(employeeId);
     if (!pendingUser) {
       return res.status(404).json(new ApiResponse(404, {}, "Pending user not found"));
     }
-  
+    
     console.log("Pending User: ", pendingUser);
   
-    console.log("Company Token: ", company._id);
+   // console.log("Company Token: ", req.company);
   
     if (companyId.toString() === company._id.toString()) {
       const newUser = new User({
@@ -149,7 +155,7 @@ const toVerifyEmployee = wrapAsyncHandler(async (req, res, next) => {
   
       try {
         await newUser.save();
-       await VerifyUser.findByIdAndDelete(userId);
+       await VerifyUser.findByIdAndDelete(employeeId);
   
         return res.status(200).json(
           new ApiResponse(200, { newUser }, "Verification Successfully Done")
@@ -165,6 +171,17 @@ const toVerifyEmployee = wrapAsyncHandler(async (req, res, next) => {
       );
     }
   });
+
+const getUnverifiedUser=wrapAsyncHandler(async(req,res)=>{
+  
+  const unverifiedUser=await VerifyUser.find({});
+  console.log(unverifiedUser);
+  if(!unverifiedUser){
+    return res.status(201).json(new  ApiResponse(201,{},"No New Request"));
+  }
+  return res.status(201).json(new  ApiResponse(201,unverifiedUser,"all unverified user fetched successfully"));
+
+})  
   
   
 export{
@@ -172,5 +189,6 @@ export{
     createCompany,
     updateResource,
     deleteResource,
-    toVerifyEmployee  
+    toVerifyEmployee,
+    getUnverifiedUser
 }

@@ -7,6 +7,7 @@ export const verifyAdmin = wrapAsyncHandler(async (req,res, next) => {
      const adminId=req.user?._id;
      const admin = await User.findById(adminId);
      if(admin.role==="admin"){
+      req.company=admin.companyId;
         next();
      }else{
         throw new ApiError(403,"You are not authorized to perform this action. You are not the Admin");

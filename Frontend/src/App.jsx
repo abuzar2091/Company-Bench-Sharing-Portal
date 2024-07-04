@@ -6,6 +6,8 @@ import AdminPanel from "./admin/AdminPanel"
 import RootLayout from "./layout/RootLayout"
 import VerifyEmployee from "./admin/VerifyEmployee"
 import AdminRoute from "./admin/AdminRoute.jsx"
+import AddResource from "./admin/AddResource"
+import SeeAllResource from "./admin/SeeAllResource"
 
 function App() {
  
@@ -29,6 +31,22 @@ function App() {
             element={
               <AdminRoute>
                 <VerifyEmployee />
+              </AdminRoute>
+            } 
+          />
+           <Route 
+            path="/admin/add-resource" 
+            element={
+              <AdminRoute>
+                <AddResource/> 
+              </AdminRoute>
+            } 
+          />
+           <Route 
+            path="/admin/allresources" 
+            element={
+              <AdminRoute>
+                <SeeAllResource/> 
               </AdminRoute>
             } 
           />

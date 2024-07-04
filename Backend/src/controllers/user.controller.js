@@ -1,4 +1,5 @@
 
+import mongoose from "mongoose";
 import { Booking } from "../models/booking.model.js";
 import { Company } from "../models/company.model.js";
 import { Resource } from "../models/resource.model.js";
@@ -121,11 +122,39 @@ const loginUser = wrapAsyncHandler(async (req, res) => {
          }, "User Logged In Successfully")
       );
   });
+  const getCurrentUser = wrapAsyncHandler((req, res) => {
+    return res
+      .status(200)
+      .json(new ApiResponse(200,req.user, "current User fetched Successfully"));
+  });  
+  
+  const logoutUser = wrapAsyncHandler(async (req, res) => {
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $unset: { refreshToken: 1 },
+        //   or
+        //   $set: { refreshToken: null },
+      },
+      {
+        new: true,
+      }
+    );
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User Logged Out Successfully!"));
+  });   
 
 const bookResources =wrapAsyncHandler(async(req,res)=>{
        const {resourceId,count}=req.body;
  console.log(req.body);
-  const userId=req.user._id
+  const userId=req.user?._id
     if(!resourceId){
         throw new ApiError(404,"Invalid resourceId")
     }
@@ -229,11 +258,28 @@ const verificationUser = wrapAsyncHandler(async (req, res, next) => {
           )
         );
   });
+const changePassword=wrapAsyncHandler(async(req,res,next)=>{
+  const {companyId}=req.body;
+   const user=await User.findById(req.user?._id);
+   if(!user){
+    throw new ApiError(404,"User is not logged In");
+   }
+   user.username="Larry Page";
+   user.companyId=new mongoose.Types.ObjectId(companyId)
+   await user.save();
+   return res.status(200).json(new ApiResponse(200, { user }, "Password change successfully"));
+  
+})  
+
+
 
 export{
     // registerUser,
     loginUser,
     bookResources,
     releaseResources,
-    verificationUser
+    verificationUser,
+    getCurrentUser,
+    logoutUser,
+    changePassword
 }  
