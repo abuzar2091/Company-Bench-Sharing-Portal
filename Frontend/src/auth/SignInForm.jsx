@@ -1,0 +1,217 @@
+import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { SignInValidation} from "@/lib/validation";
+import { Link, useNavigate } from "react-router-dom";
+import '../css/gradient.css'
+
+
+// import { useUserContext } from "@/context/AuthContext";
+import Loader from "@/components/Loader";
+import axios from "axios";
+import { useUserContext } from "@/context/AuthContext";
+
+function SignInForm() {
+  const isLoading = false;
+  const [eye, setEye] = useState(true);
+  const [check, setCheck] = useState(false);
+  const [submitform, setSubmitForm] = useState(false);
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+
+  const navigate = useNavigate();
+
+  const form = useForm({
+    resolver: zodResolver(SignInValidation),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  async function onSubmit(values) {
+    try {
+      setSubmitForm(true);
+
+      // if (!check) {
+      //   toast({
+      //     title: "Read and check the terms and conditons, Please Try again",
+      //   });
+      //   console.log("Read and check the terms and conditons");
+      //   setSubmitForm(false);
+      //   return;
+      // }
+      await axios
+        .post("/api/v1/users/login", values)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log("error ", err);
+        });
+      checkAuthUser();
+      form.reset();
+      setSubmitForm(false);
+      navigate("/");
+    } catch (error) {
+      setSubmitForm(false);
+      console.log("Something happening wrong in registering the user ", error);
+    }
+  }
+
+  return (
+    <div className="w-full flex justify-center items-center bg-gray-100 h-screen ">
+      <div
+        className="flex rounded-3xl bg-white gap-10  z-100 md:flex-row flex-col"
+      >
+        
+   <div className="gradient-bg  flex items-center justify-center md:w-[50%] rounded-tl-3xl md:rounded-bl-3xl rounded-tr-3xl">
+      <div className="z-10 flex flex-col items-start gap-4 p-8  shadow-lg">
+        <img src="/images/logo4.png" className="w-[200px]" alt="Logo" />
+        <h1 className="font-bold text-2xl sm:text-xl text-center text-white">
+          Welcome to
+          <br />
+          Bench Sharing Portal
+        </h1>
+      </div>
+    </div>
+        <div className="md:hidden flex flex-row ">
+          <div className="border-gray-300 ml-[20px]  w-[50px] border-[1px]  " />
+          <div className="border-gray-400  border-[1px]  w-[50px]" />
+          <div className="border-gray-800  border-[1px]  w-[150px] " />
+          <div className="border-gray-400 border-[1px]  w-[50px] " />
+          <div className="border-gray-300 border-[1px] w-[50px]  " />
+        </div>
+        <div className="hidden md:flex flex-col ">
+          <div className="border-gray-300 mt-[60px] border-[1px]  h-[50px]" />
+          <div className="border-gray-400  border-[1px]   h-[50px]" />
+          <div className="border-gray-800  border-[1px]  h-[150px]" />
+          <div className="border-gray-400 border-[1px] h-[50px]" />
+          <div className="border-gray-300 border-[1px]   h-[50px]" />
+        </div>
+
+        <div className="px-16  md:py-4 py-8 flex items-center w-[400px]">
+          <Form {...form}>
+            <div className="sm:w-420 flex-col ">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-2 w-full mt-1"
+              >
+              
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type="email"
+                            placeholder="user@example.com"
+                            {...field}
+                            className="border rounded p-2 pl-8"
+                          />
+                          <img
+                            src="/assets/icons/msg.svg"
+                            alt="Account icon"
+                            className="absolute top-3 left-2 w-4 h-4 pointer-events-none"
+                          />
+                        </div>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+               
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type={eye ? "password" : "text"}
+                            placeholder="************"
+                            {...field}
+                            className="border rounded p-2 pl-8"
+                          />
+                          <img
+                            src="/assets/icons/locked.svg"
+                            alt="Account icon"
+                            className="absolute top-2 left-2 w-4 h-4 pointer-events-none"
+                          />
+
+                          <img
+                            src={
+                              eye
+                                ? "/assets/icons/eye.svg"
+                                : "/assets/icons/eye-off.svg"
+                            }
+                            alt="Account icon"
+                            className="absolute top-3 right-3 w-4 h-4  cursor-pointer"
+                            onClick={(e) => setEye((prev) => !prev)}
+                          />
+                        </div>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="bg-blue-500">
+                  {submitform ? (
+                    <div className="flex gap-2">
+                      <Loader />
+                      <p>Loading...</p>
+                    </div>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </form>
+              <div className="flex justify-center cursor-pointer items-center gap-2 mt-4 ">
+                <img
+                  src={
+                    check
+                      ? "/assets/icons/square-check.svg"
+                      : "/assets/icons/checked.svg"
+                  }
+                  onClick={(e) => setCheck((prev) => !prev)}
+                />
+                <p className="text-sm">I agree to the terms and conditions</p>
+              </div>
+
+              <p className="text-small-regular text-sm text-light-2 text-center mt-2 ">
+                Already have an account?
+                <Link
+                  to="/signup"
+                  className="text-primary-500 text-small-semibold ml-1 text-blue-600"
+                > Sign Up
+                </Link>
+              </p>
+            </div>
+          </Form>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default SignInForm;

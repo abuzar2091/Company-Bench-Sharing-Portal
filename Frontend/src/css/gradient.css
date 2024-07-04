@@ -1,0 +1,7 @@
+.gradient-bg {
+    background: rgb(36,34,0);
+    background: linear-gradient(208deg, rgba(36,34,0,1) 0%, rgba(223,236,14,1) 55%, rgba(9,9,121,1) 55%, rgba(0,212,255,1) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
