@@ -48,7 +48,7 @@ function HomePage() {
     };
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col min-h-screen bg-gray-100">
             <p className='text-bold text-white bg-blue-400 text-center py-5 font-semibold sm:text-xl text-md'>
                 Bench Sharing Portal
             </p>
