@@ -263,7 +263,7 @@ function SignInForm() {
         setSubmitForm(false);
      return;
    }
-      await axios.post("/api/v1/users/login", values)
+      await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/users/login`, values)
         .then((res) => {
           console.log(res);
         })

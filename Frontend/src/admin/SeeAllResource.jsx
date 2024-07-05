@@ -10,7 +10,7 @@ function SeeAllResource() {
     const navigate = useNavigate();
     useEffect(()=>{
         const getAddedResource=async()=>{
-          await axios.get("/api/v1/admin/getaddedresource")
+          await axios.get(`${import.meta.env.VITE_API_URI}/api/v1/admin/getaddedresource`)
           .then((res)=>{
             setAddedReSource(res.data.data.resource);
             console.log(res.data.data.resource);
@@ -27,7 +27,7 @@ function SeeAllResource() {
         navigate('/admin/update-resource', { state:  {resource}  });
       };
       const deleteResource = async(resourceId) => {
-       await axios.post(`/api/v1/admin/deleteresource/${resourceId}`)
+       await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/admin/deleteresource/${resourceId}`)
        .then((res)=>{
         console.log(res.data);
         const data=addedResource?addedResource.filter((resource)=>resource._id!==resourceId):null;

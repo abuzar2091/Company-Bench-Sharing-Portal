@@ -10,7 +10,7 @@ function VerifyEmployee() {
   const [userList, setUserList] = useState(unverifiedUser?.data || []);
   const handleVerifyUser = async (employeeId, companyId) => {
     await axios
-      .post("/api/v1/admin/verifyemployee", { employeeId, companyId })
+      .post(`${import.meta.env.VITE_API_URI}/api/v1/admin/verifyemployee`, { employeeId, companyId })
       .then((res) => {
         console.log(res.data);
         setVerifyUser(res.data);

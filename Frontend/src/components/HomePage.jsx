@@ -1,51 +1,3 @@
-// import React, { useEffect, useState } from 'react'
-// import axios from 'axios'
-// import { Button } from './ui/button';
-
-// function HomePage() {
-//     const [showResources,setShowResources]=useState(null);
-//     useEffect(()=>{
-//         const getResources=async()=>{
-//             await axios.get("/api/v1/users/getresources")
-//             .then((res)=>{
-//                 console.log(res.data.data.resources);
-//                 setShowResources(res.data.data.resources);
-//             })
-//             .catch((err)=>{
-//                 console.log(err);
-//             })
-//         }
-//         getResources();
-//     },[]);
-
-//     const handleBookResource=()=>{
-
-//     }
-    
-//   return (
-//     <div className="flex flex-col">
-//        <p className='text-bold text-white bg-blue-400 text-center  py-5 font-semibold text-xl'>Bench Sharing Portal
-//        </p>  
-//        <div className="grid grid-cols-3 gap-6 m-6">
-//         {
-//             showResources?.map((resource)=>(
-//                 <div key={resource?._id} className='flex flex-col justify-between gap-2 text-white text-center sm:p-8  p-3 bg-blue-400 rounded-lg'>
-//                 <p>Type: {resource.type}</p>
-//                 <p>Description: {resource.description}</p>
-//                 <p>Available Stock Count: {resource.count}</p>
-//                 <Button onClick={()=>handleBookResource()}>Book for Me</Button>
-//                 </div>
-//             ))
-//         }
-
-//        </div>
-
-//     </div>
-//   )
-// }
-
-// export default HomePage
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button } from './ui/button';
@@ -59,7 +11,7 @@ function HomePage() {
 
     useEffect(() => {
         const getResources = async () => {
-            await axios.get("/api/v1/users/getresources")
+            await axios.get(`${import.meta.env.VITE_API_URI}/api/v1/users/getresources`)
                 .then((res) => {
                     console.log(res.data.data.resources);
                     setShowResources(res.data.data.resources);
@@ -75,7 +27,7 @@ function HomePage() {
     const handleBookResource = async(resourceId, count) => {
         // Handle booking logic here
         setIsBooking(true);
-        await axios.post("/api/v1/users/bookresources",{resourceId,count})
+        await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/users/bookresources`,{resourceId,count})
         .then((res)=>{
             console.log(res.data);
             setIsBooking(false);

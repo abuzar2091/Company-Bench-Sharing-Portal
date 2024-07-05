@@ -36,7 +36,7 @@ function  AddResource() {
     try {
       setSubmitForm(true);
       await axios
-        .post("/api/v1/admin/addresource", values)
+        .post(`${import.meta.env.VITE_API_URI}/api/v1/admin/addresource`, values)
         .then((res) => {
           console.log(res);
         })

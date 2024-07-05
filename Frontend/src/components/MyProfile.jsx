@@ -10,7 +10,7 @@ function MyProfile() {
     const [isReleasing,setIsReleasing]=useState(false);
     useEffect(() => {
         const getBookedResource = async () => {
-            await axios.get("/api/v1/users/getbookedresources")
+            await axios.get(`${import.meta.env.VITE_API_URI}/api/v1/users/getbookedresources`)
                 .then((res) => {
                     setIsLoading(false);
                         setBookedResources(res.data.data.bookedResources);
@@ -25,7 +25,7 @@ function MyProfile() {
     }, []);
     const handleReleaseResource = async (resourceId, count) => {
         setIsReleasing(true);
-        await axios.post("/api/v1/users/releaseresources", { resourceId, count })
+        await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/users/releaseresources`, { resourceId, count })
             .then((res) => {
                 console.log(res.data);
     
@@ -54,23 +54,6 @@ function MyProfile() {
             });
     };
     
-    
-    // const handleReleaseResource = async(resourceId, count) => {
-    //     setIsReleasing(true);
-    //     await axios.post("/api/v1/users/releaseresources",{resourceId,count})
-    //     .then((res)=>{
-    //         console.log(res.data);
-    //         const data=bookedResources?bookedResources.filter((resource)=>(
-    //              resourceId!==resource.resourceDetails._id
-    //         )):null;
-    //         setBookedResources(data);
-    //         setIsReleasing(false);
-    //     })
-    //     .catch((err)=>{
-    //         setIsReleasing(false);
-    //         console.log(err);
-    //     })
-    // };
     const handleSelectChange = (resourceId, value) => {
         setSelectedCounts((prev) => ({
             ...prev,
