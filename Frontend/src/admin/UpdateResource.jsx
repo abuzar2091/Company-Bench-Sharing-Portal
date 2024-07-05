@@ -46,8 +46,8 @@ function UpdateResource() {
   }
 
   return (
-    <div className="w-full flex justify-center items-center bg-gray-100 h-screen">
-      <div className="w-[50%] flex rounded-3xl p-4 bg-white gap-0 z-100 flex-col">
+    <div className="w-full flex justify-center  bg-gray-100 h-screen">
+      <div className="lg:w-[55%] sm:w-[70%] w-[90%] flex rounded-3xl p-4 mt-4 bg-white gap-0 z-100 flex-col h-[400px]">
         <h1 className="font-bold text-2xl sm:text-xl text-center p-4">Update Resource</h1>
         <div className="flex pb-8 px-4 items-center justify-center w-[100%]">
           <Form {...form}>

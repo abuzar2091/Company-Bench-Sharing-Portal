@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -20,9 +20,9 @@ import Loader from "@/components/Loader";
 
 
 function SignUpForm() {
-  const isLoading = false;
   const [eye, setEye] = useState(true);
   const [check, setCheck] = useState(false);
+  const [isChecked,setIsChecked]=useState("");
   const [submitform, setSubmitForm] = useState(false);
   const [verifyuser,setVerifyUser]=useState(null);
 
@@ -39,20 +39,21 @@ function SignUpForm() {
       companyId:"",
     },
   });
+  useEffect(()=>{
+    setTimeout(()=>{setIsChecked("")},5000);
+},[isChecked])
 
   async function onSubmit(values) {
     try {
       setSubmitForm(true);
       console.log(values);
 
-    //   if (!check) {
-    //     toast({
-    //       title: "Read and check the terms and conditons, Please Try again",
-    //     });
-    //     console.log("Read and check the terms and conditons");
-    //     setSubmitForm(false);
-    //     return;
-    //   }
+      if (!check) {
+        
+           setIsChecked("Read and check the terms and condition");
+           setSubmitForm(false);
+        return;
+      }
       await axios
         .post("/api/v1/users/signup", values)
         .then((res) => {
@@ -74,19 +75,20 @@ function SignUpForm() {
   }
 
   return (
-    <div className="w-full flex justify-center items-center bg-gray-100 h-screen ">
+    <div className="w-full flex justify-center items-center bg-gray-100 min-h-screen ">
       <div
-        className="flex rounded-3xl bg-white gap-10  z-100 md:flex-row flex-col " 
+        className="flex rounded-3xl bg-white gap-10 mt-8 z-100 md:flex-row xl:w-[60%] lg:w-[70%] sm:w-[70%] w-[90%] flex-col " 
       >
        
-   <div className="gradient-bg  flex items-center md:w-[50%]  justify-center rounded-tl-3xl md:rounded-bl-3xl rounded-tr-3xl ">
+   <div className="gradient-bg  flex items-center md:w-[50%]  justify-center rounded-tl-3xl md:rounded-bl-3xl md:rounded-tr-[0px] rounded-tr-3xl ">
       <div className="z-10 flex flex-col items-start gap-4 p-8  shadow-lg">
-        <img src="/images/logo4.png" className="w-[200px]" alt="Logo" />
-        <h1 className="font-bold text-2xl sm:text-xl text-center text-white">
+        <img src="/images/logo4.png" className="sm:w-[200px] w-[180px]" alt="Logo" />
+        <h1 className="font-bold  sm:text-xl text-lg text-center text-white">
           Welcome to
           <br />
           Bench Sharing Portal
         </h1>
+        {isChecked.length>0 && <p className="font-semibold text-red-500">{isChecked}</p>}
       </div>
     </div>
     
@@ -106,12 +108,12 @@ function SignUpForm() {
           <div className="border-gray-300 border-[1px]   h-[50px]" />
         </div>
 
-        <div className="px-16  md:py-4 py-8  w-[400px]">
+        <div className="mx-auto  md:py-4 py-8 px-4  lg:w-[400px] md:w-[300px]">
           <Form {...form}>
             <div className="sm:w-420 flex-col ">
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col gap-2 w-full mt-1"
+                className="flex flex-col gap-2 w-full "
               >
                 <FormField
                   control={form.control}

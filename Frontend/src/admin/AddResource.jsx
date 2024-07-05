@@ -53,7 +53,7 @@ function  AddResource() {
   }
 
   return (
-    <div className="w-full flex justify-center    bg-gray-100 min-h-screen ">
+    <div className="w-full flex justify-center  bg-gray-100 min-h-screen ">
       <div
         className="lg:w-[55%] sm:w-[70%] w-[90%] flex  rounded-3xl p-4 mt-4 h-[400px] bg-white gap-0  z-100 flex-col "
       >
