@@ -165,7 +165,7 @@ const bookResources =wrapAsyncHandler(async(req,res)=>{
     const companyId=resource.companyId;
     const user=await User.findById(bookedBy);
     const bookedResource=await resource.bookResource(user,count);
-    if (bookedResource > 0) {
+    if (bookedResource >= 0) {
         let booking = await Booking.findOne({ resourceId, bookedBy });
     
         if (booking) {
@@ -198,7 +198,7 @@ const releaseResources =wrapAsyncHandler(async(req,res)=>{
     if(!resource) throw new ApiError(404,"Resource not found");
     const user=await User.findById(bookedBy);
     const isReleasedResource=await resource.releaseResource(user,count);
-    console.log(isReleasedResource ,"beta");
+
     if(isReleasedResource===1){
         let booking = await Booking.findOne({ resourceId, bookedBy });
         console.log("booking ",booking);
@@ -271,6 +271,54 @@ const changePassword=wrapAsyncHandler(async(req,res,next)=>{
   
 })  
 
+const getResources=wrapAsyncHandler(async(req,res,next)=>{
+  const resources=await Resource.find({status:"available"});
+  if(!resources){
+    return res.status(404).json(new ApiResponse(404,{},"no resouce found"))
+  }
+  return res.status(200).json(new ApiResponse(200,{resources},"resources fetched successfully"));
+})
+
+const getBookedResources = wrapAsyncHandler(async (req, res, next) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(400).json(new ApiResponse(400, {}, "User ID is required"));
+  }
+
+  const bookedResources = await User.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+    { $unwind: "$bookedResources" },
+    {
+      $lookup: {
+        from: "resources",
+        localField: "bookedResources.resource",
+        foreignField: "_id",
+        as: "resourceDetails"
+      }
+    },
+    { $unwind: "$resourceDetails" },
+    {
+      $project: {
+        _id: 0,
+        "resourceDetails._id":1,
+        "resourceDetails.type": 1,
+        "resourceDetails.description": 1,
+        "resourceDetails.count": 1,
+        "bookedResources.countToBook": 1,
+        "bookedResources.bookedAt": 1
+      }
+    }
+  ]);
+  console.log(bookedResources);
+  if (bookedResources?.length===0) {
+    
+    return res.status(200).json(new ApiResponse(404,{}, "No booked resources found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, { bookedResources }, "Booked resources fetched successfully"));
+});
+
 
 
 export{
@@ -281,5 +329,7 @@ export{
     verificationUser,
     getCurrentUser,
     logoutUser,
-    changePassword
+    changePassword,
+    getResources,
+    getBookedResources,
 }  

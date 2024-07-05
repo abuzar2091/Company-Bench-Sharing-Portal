@@ -11,8 +11,8 @@ const resourceSchema = new mongoose.Schema({
   count: {
     type: Number,
     required: true,
-    min:1,
-    default:1
+    min:0,
+    default:0
   },
   companyId:{
     type: mongoose.Schema.Types.ObjectId,
@@ -90,7 +90,8 @@ resourceSchema.methods.releaseResource = async function(user,countToRelease) {
     if (this.bookedBy[bookingIndex].countToBook <= 0) {
         this.bookedBy.splice(bookingIndex, 1);
       }
-    this.count += countToRelease;
+    const num=parseInt(countToRelease);
+    this.count += num;
     if(this.count>=1){
         this.status="available"
         if(this.availableFrom===null){

@@ -9,6 +9,7 @@ import AdminRoute from "./admin/AdminRoute.jsx"
 import AddResource from "./admin/AddResource"
 import SeeAllResource from "./admin/SeeAllResource"
 import UpdateResource from "./admin/UpdateResource"
+import MyProfile from "./components/MyProfile"
 
 function App() {
  
@@ -19,6 +20,7 @@ function App() {
       <Route path="/" element={<HomePage/>}/>
       <Route path="/signup" element={<SignUpForm/>}/>
       <Route path="/login" element={<SignInForm/>}/>
+      <Route path="/my-profile" element={<MyProfile/>}/>
       <Route 
             path="/admin" 
             element={

@@ -53,17 +53,17 @@ function  AddResource() {
   }
 
   return (
-    <div className="w-full flex justify-center items-center  bg-gray-100 h-screen ">
+    <div className="w-full flex justify-center    bg-gray-100 min-h-screen ">
       <div
-        className="w-[50%] flex  rounded-3xl p-4  bg-white gap-0  z-100 flex-col "
+        className="lg:w-[55%] sm:w-[70%] w-[90%] flex  rounded-3xl p-4 mt-4 h-[400px] bg-white gap-0  z-100 flex-col "
       >
    
-      <h1 className="font-bold text-2xl sm:text-xl  text-center p-4">
+      <h1 className="font-bold sm:text-2xl text-lg  text-center p-4">
          Add Resource
       </h1>
-        <div className="flex pb-8 px-4 items-center justify-center w-[100%]">
+        <div className="flex pb-8 px-4 items-center  justify-center w-[100%]">
           <Form {...form}>
-            <div className="sm:w-420 flex-col w-[100%]">
+            <div className="sm:w-420 flex-col xss:w-840  w-[100%] ">
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col gap-2 w-[100%] mt-1"
