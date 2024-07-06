@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
   const checkAuthUser = async () => {
     setIsLoading(true);
     try {
-      const currentAccount= await axios.get("/api/v1/users/get-current-user");  
+      const currentAccount= await axios.get(`${import.meta.env.VITE_API_URI}/api/v1/users/get-current-user`);  
     //   .then((res)=>{
     //   console.log(res);
     // })
