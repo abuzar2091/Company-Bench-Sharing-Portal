@@ -7,7 +7,7 @@ const app =express();
 //     credentials:true
 // }))
 app.use(cors({
-    origin: 'https://abuzar-bench-portal.netlify.app/',
+    origin: 'https://abuzar-bench-portal.netlify.app',
     methods: 'GET,POST,PUT,DELETE',
     credentials: true,
 }));
