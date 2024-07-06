@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button } from './ui/button';
 import Loader from './Loader.jsx';
+axios.defaults.withCredentials = true;
 
 function MyProfile() {
     const [isLoading,setIsLoading]=useState(true);

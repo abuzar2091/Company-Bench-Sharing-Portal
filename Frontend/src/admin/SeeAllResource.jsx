@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+axios.defaults.withCredentials = true;
 
 function SeeAllResource() {
     const [loading,setLoading]=useState(true);

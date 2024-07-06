@@ -2,7 +2,7 @@ import { INITIAL_USER, useUserContext } from '@/context/AuthContext';
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+axios.defaults.withCredentials = true;
 
 function Header() {
     const {

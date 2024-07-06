@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
-
+axios.defaults.withCredentials = true;
 function HomePage() {
     const [showResources, setShowResources] = useState(null);
     const [selectedCounts, setSelectedCounts] = useState({});

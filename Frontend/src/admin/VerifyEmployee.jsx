@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-
+axios.defaults.withCredentials = true;
 function VerifyEmployee() {
   const location = useLocation();
   const unverifiedUser = location.state?.unverifiedUser;

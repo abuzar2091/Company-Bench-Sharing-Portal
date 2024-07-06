@@ -284,7 +284,7 @@ const getBookedResources = wrapAsyncHandler(async (req, res, next) => {
   const userId = req.user?._id;
 
   if (!userId) {
-    return res.status(400).json(new ApiResponse(400, {}, "User ID is required"));
+    return res.status(200).json(new ApiResponse(400, {}, "User ID is required"));
   }
 
   const bookedResources = await User.aggregate([

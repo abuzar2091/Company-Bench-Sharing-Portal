@@ -8,7 +8,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
-
+axios.defaults.withCredentials = true;
 function UpdateResource() {
   const location = useLocation();
   const resource = location.state?.resource.resource;

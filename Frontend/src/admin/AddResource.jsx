@@ -16,6 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "@/components/Loader";
 import axios from "axios";
 import { useUserContext } from "@/context/AuthContext";
+axios.defaults.withCredentials = true;
 
 function  AddResource() {
   const [submitform, setSubmitForm] = useState(false);
