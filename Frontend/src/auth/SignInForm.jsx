@@ -263,7 +263,9 @@ function SignInForm() {
         setSubmitForm(false);
      return;
    }
-      await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/users/login`, values)
+      await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/users/login`,values,{
+        withCredentials: true, // Ensure cookies are sent with the request
+      })
         .then((res) => {
           console.log(res);
         })
