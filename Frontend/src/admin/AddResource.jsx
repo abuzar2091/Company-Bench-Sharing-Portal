@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -16,12 +16,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "@/components/Loader";
 import axios from "axios";
 import { useUserContext } from "@/context/AuthContext";
+import { useMessageContext } from "@/context/MessageContext";
 axios.defaults.withCredentials = true;
 
 function  AddResource() {
   const [submitform, setSubmitForm] = useState(false);
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
-
+  const {message, messageType,setMessage,setMessageType } = useMessageContext();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -32,33 +33,52 @@ function  AddResource() {
       count:"",
     },
   });
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+      }, 7000); // 10 seconds
+
+      return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
+    }
+  }, [message, setMessage]);
 
   async function onSubmit(values) {
     try {
       setSubmitForm(true);
       await axios
-        .post(`${import.meta.env.VITE_API_URI}/api/v1/admin/addresource`, values)
+        .post(`/api/v1/admin/addresource`, values)
         .then((res) => {
           console.log(res);
+          setMessage("Resource Added Successfully");
+          setMessageType("success");
+          navigate("/admin/allresources");
         })
         .catch((err) => {
           console.log("error ", err);
+          setMessage("Error Occur During Addition of Resource");
+          setMessageType("error");
         });
       form.reset();
       setSubmitForm(false);
-      navigate("/admin/allresources");
+      
     } catch (error) {
       setSubmitForm(false);
+      setMessage("Error Occur During Addition of Resource");
+        setMessageType("error");
       console.log("Something happening wrong in registering the user ", error);
     }
   }
 
   return (
-    <div className="w-full flex justify-center  bg-gray-100 min-h-screen ">
+    <div className="w-full flex flex-col items-center  bg-gray-100 min-h-screen ">
+       {message && (
+               <div className={`message ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} p-2 mb-1 text-white text-center`}>{message}</div>
+            )}
       <div
-        className="lg:w-[55%] sm:w-[70%] w-[90%] flex  rounded-3xl p-4 mt-4 h-[400px] bg-white gap-0  z-100 flex-col "
+        className="lg:w-[55%] sm:w-[70%] w-[90%] flex  rounded-3xl p-4 mt-12 h-[400px] bg-white gap-0  z-100 flex-col "
       >
-   
+         
       <h1 className="font-bold sm:text-2xl text-lg  text-center p-4">
          Add Resource
       </h1>

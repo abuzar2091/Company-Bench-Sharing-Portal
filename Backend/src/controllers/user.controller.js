@@ -239,7 +239,7 @@ const verificationUser = wrapAsyncHandler(async (req, res, next) => {
       $or: [{ username }, { email }],
     });
     if (exitedUser) {
-      throw new ApiError(409, "User with username or email already exits");
+      throw new ApiError(404,"User with username or email already exits");
     }
     const user = await VerifyUser.create({
       username,

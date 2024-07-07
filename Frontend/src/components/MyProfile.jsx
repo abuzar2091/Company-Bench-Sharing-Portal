@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button } from './ui/button';
 import Loader from './Loader.jsx';
+import { useMessageContext } from '@/context/MessageContext';
 axios.defaults.withCredentials = true;
 
 function MyProfile() {
@@ -9,9 +10,10 @@ function MyProfile() {
     const [bookedResources, setBookedResources] = useState(null);
     const [selectedCounts, setSelectedCounts] = useState({});
     const [isReleasing,setIsReleasing]=useState(false);
+    const { message, messageType,setMessage,setMessageType } = useMessageContext();
     useEffect(() => {
         const getBookedResource = async () => {
-            await axios.get(`${import.meta.env.VITE_API_URI}/api/v1/users/getbookedresources`)
+            await axios.get(`/api/v1/users/getbookedresources`)
                 .then((res) => {
                     setIsLoading(false);
                         setBookedResources(res.data.data.bookedResources);
@@ -26,10 +28,12 @@ function MyProfile() {
     }, []);
     const handleReleaseResource = async (resourceId, count) => {
         setIsReleasing(true);
-        await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/users/releaseresources`, { resourceId, count })
+        await axios.post(`/api/v1/users/releaseresources`, { resourceId, count })
             .then((res) => {
                 console.log(res.data);
-    
+                
+                setMessage("Resource Released Successfully");
+                setMessageType("success");
                 const updatedResources = bookedResources?.map((resource) => {
                     if (resourceId === resource.resourceDetails._id) {
                         const updatedCount = resource.bookedResources.countToBook - count;
@@ -80,6 +84,15 @@ function MyProfile() {
         };
         return `${day}${daySuffix(day)} ${month} ${year}`;
     };
+    useEffect(() => {
+        if (message) {
+          const timer = setTimeout(() => {
+            setMessage('');
+          }, 7000); // 10 seconds
+    
+          return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
+        }
+      }, [message, setMessage]);
 
     if(isLoading){
         return <div className='flex w-full min-h-screen justify-center bg-blue-100'>
@@ -91,7 +104,9 @@ function MyProfile() {
         <div className='min-h-screen flex flex-col'>
             <h1 className='flex justify-center md:text-2xl text-lg font-semibold'>Your Booked Resource</h1>
             {!bookedResources && <p className='flex justify-center sm:text-lg text-md font-semibold mt-3'>you have no booked resource</p>}
-          
+             {message && (
+              <div className={`message ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} p-2 mb-1 text-white`}>{message}</div>
+             )}
             <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 m-6">
                 {bookedResources?.length>0 && bookedResources?.map((booking, index) => (
                     <div key={index} className='flex flex-col justify-between gap-2 text-white text-center sm:p-8 p-3 bg-blue-400 rounded-lg'>

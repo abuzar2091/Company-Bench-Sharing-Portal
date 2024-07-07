@@ -235,6 +235,7 @@ import '../css/gradient.css';
 import Loader from "@/components/Loader";
 import axios from "axios";
 import { useUserContext } from "@/context/AuthContext";
+import { useMessageContext } from "@/context/MessageContext";
 
 function SignInForm() {
   const [eye, setEye] = useState(true);
@@ -242,6 +243,7 @@ function SignInForm() {
   const [isChecked,setIsChecked]=useState("");
   const [submitForm, setSubmitForm] = useState(false);
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const { message, messageType,setMessage,setMessageType } = useMessageContext();
   const navigate = useNavigate();
   useEffect(()=>{
       setTimeout(()=>{setIsChecked("")},5000);
@@ -263,27 +265,44 @@ function SignInForm() {
         setSubmitForm(false);
      return;
    }
-      await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/users/login`,values,{
-        withCredentials: true, // Ensure cookies are sent with the request
-      })
+  //  with this 
+  //  ,{
+  //   withCredentials: true, // Ensure cookies are sent with the request
+  // }
+      await axios.post(`/api/v1/users/login`,values)
         .then((res) => {
           console.log(res);
+          setMessage("User Logged In Successfully");
+          setMessageType('success');
+          navigate("/");
         })
         .catch((err) => {
           console.log("error ", err);
+          setMessage("Entered Wrong Email or password");
+          setMessageType('error');
         });
       checkAuthUser();
       form.reset();
       setSubmitForm(false);
-      navigate("/");
     } catch (error) {
       setSubmitForm(false);
       console.log("Something went wrong in registering the user ", error);
     }
   }
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+      }, 7000); // 10 seconds
 
+      return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
+    }
+  }, [message, setMessage]);
   return (
-    <div className="w-full flex justify-center bg-gray-100 min-h-screen">
+    <div className="w-full flex flex-col items-center mt-4 bg-gray-100 min-h-screen">
+       {message && (
+              <div className={`message ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} p-2 mb-1 text-white`}>{message}</div>
+         )}
       <div className="flex rounded-3xl bg-white gap-10 mt-8  md:flex-row md:h-[400px]  xl:w-[60%] lg:w-[70%] sm:w-[70%] w-[90%] flex-col">
         <div className="gradient-bg flex items-center justify-center lg:w-[55%]  rounded-tl-3xl md:rounded-bl-3xl md:rounded-tr-[0px] rounded-tr-3xl">
           <div className="z-10 flex flex-col items-start gap-4 p-8 shadow-lg">

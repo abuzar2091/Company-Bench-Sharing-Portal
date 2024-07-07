@@ -10,9 +10,9 @@ import AddResource from "./admin/AddResource"
 import SeeAllResource from "./admin/SeeAllResource"
 import UpdateResource from "./admin/UpdateResource"
 import MyProfile from "./components/MyProfile"
+import PageNotFound from "./share/PageNotFound"
 
 function App() {
- 
   return (
     <>
     <Routes>
@@ -61,10 +61,10 @@ function App() {
               </AdminRoute>
             } 
           />
+      <Route path="*" element={<PageNotFound/>} />    
       </Route>
     </Routes>
     </>
-   
   )
 }
 

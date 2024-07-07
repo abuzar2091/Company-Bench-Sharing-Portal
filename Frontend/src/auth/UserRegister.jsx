@@ -17,6 +17,7 @@ import '../css/gradient.css'
 import axios from "axios";
 // import { useUserContext } from "@/context/AuthContext";
 import Loader from "@/components/Loader";
+import { useMessageContext } from "@/context/MessageContext";
 
 
 function SignUpForm() {
@@ -24,11 +25,11 @@ function SignUpForm() {
   const [check, setCheck] = useState(false);
   const [isChecked,setIsChecked]=useState("");
   const [submitform, setSubmitForm] = useState(false);
-  const [verifyuser,setVerifyUser]=useState(null);
 
   const navigate = useNavigate();
 //   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
 //   const { toast } = useToast();
+    const {message, messageType,setMessage, setMessageType}=useMessageContext();
 
   const form = useForm({
     resolver: zodResolver(SignUpValidation),
@@ -42,6 +43,15 @@ function SignUpForm() {
   useEffect(()=>{
     setTimeout(()=>{setIsChecked("")},5000);
 },[isChecked])
+useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+      }, 7000); // 10 seconds
+
+      return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
+    }
+  }, [message, setMessage]);
 
   async function onSubmit(values) {
     try {
@@ -49,33 +59,40 @@ function SignUpForm() {
       console.log(values);
 
       if (!check) {
-        
            setIsChecked("Read and check the terms and condition");
            setSubmitForm(false);
         return;
       }
       await axios
-        .post(`${import.meta.env.VITE_API_URI}/api/v1/users/signup`, values)
+        .post(`/api/v1/users/signup`, values)
         .then((res) => {
           console.log(res.data);
-          setVerifyUser(res.data);
-
+          setMessage("Registration request submitted. Await admin approval");
+          setMessageType('success');
+          navigate("/");
         })
         .catch((err) => {
           console.log("error ", err);
+          setMessage("User with username or email already exits");
+          setMessageType('error');
         });
     //   checkAuthUser();
-     form.reset();
+     form.reset();  
       setSubmitForm(false);
-     navigate("/");
-    } catch (error) {
+      
+    }catch (error) {
       setSubmitForm(false);
+      setMessage("Something went wrong during the signup process. Please try again.");
+      setMessageType('error');
       console.log("Something happening wrong in registering the user ", error);
     }
   }
 
   return (
-    <div className="w-full flex justify-center items-center bg-gray-100 min-h-screen ">
+    <div className="w-full flex  flex-col  items-center mt-4 bg-gray-100 min-h-screen ">
+         {message && (
+              <div className={`message ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} p-2 mb-1 text-white`}>{message}</div>
+             )}
       <div
         className="flex rounded-3xl bg-white gap-10 mt-8 z-100 md:flex-row xl:w-[60%] lg:w-[70%] sm:w-[70%] w-[90%] flex-col " 
       >
