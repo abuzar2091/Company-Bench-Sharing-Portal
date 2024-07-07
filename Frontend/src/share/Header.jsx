@@ -31,6 +31,7 @@ function Header() {
 
     let navItems = [
         { name: "Home", redirection: "/", active: true },
+        { name: "Company-Id", redirection: "/company-id", active: true },
         { name: "Sign-In", redirection: "/login", active: !isAuthenticated },
         { name: "Sign-Up", redirection: "/signup", active: !isAuthenticated },
     ];

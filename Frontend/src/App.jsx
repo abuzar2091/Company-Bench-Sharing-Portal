@@ -12,6 +12,7 @@ import UpdateResource from "./admin/UpdateResource"
 import MyProfile from "./components/MyProfile"
 import PageNotFound from "./share/PageNotFound"
 import BookedByUser from "./admin/BookedByUser"
+import CompanyID from "./share/CompanyID"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       <Route path="/signup" element={<SignUpForm/>}/>
       <Route path="/login" element={<SignInForm/>}/>
       <Route path="/my-profile" element={<MyProfile/>}/>
+      <Route path="/company-id" element={<CompanyID/>}/>
       <Route 
             path="/admin" 
             element={
