@@ -69,7 +69,7 @@ resourceSchema.methods.bookResource = async function(user,countToBook) {
     const userBooking = user.bookedResources.find(b => b.resource.toString() === this._id.toString());
     if (userBooking) {
       userBooking.countToBook += booking;
-    } else {
+    }else{
       user.bookedResources.push({ resource: this._id, countToBook: booking });
     }
 
@@ -77,7 +77,7 @@ resourceSchema.methods.bookResource = async function(user,countToBook) {
     
     return  booking;
   }
-  return 0;
+  return -1;
 };
 
 resourceSchema.methods.releaseResource = async function(user,countToRelease) {

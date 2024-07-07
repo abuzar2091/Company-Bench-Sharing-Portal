@@ -125,32 +125,6 @@ const deleteResource = wrapAsyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, { deletedResource }, "Resource deleted successfully"));
   });
 
-// const toVerifyEmployee=wrapAsyncHandler(async(req,res,next)=>{
-//     const {userId,companyId}=req.body;
-//     console.log(req.body);
-//     const pendingUser = await VerifyUser.findById(userId);
-//     console.log("before");
-//    const companyToken=req.companyId;
-//    console.log("token ",companyToken);
-//     if(companyId===companyToken){
-//         const newUser = new User({
-//             username: pendingUser?.username,
-//             email: pendingUser?.email,
-//             password: pendingUser?.password,
-//             role:pendingUser?.role,
-//             companyId,
-//           });
-//           await newUser.save();
-//           await VerifyUser.findByIdAndDelete(userId);
-//           return res.json(200).json(
-//             new ApiResponse(200,{newUser},"Verification Successfully Done")
-//           )
-//     }
-//     await VerifyUser.findByIdAndDelete(userId);
-//     return res.json(200).json(
-//       new ApiResponse(200,{},"Verification Rejected")
-//     )
-// })  
 const toVerifyEmployee = wrapAsyncHandler(async (req, res, next) => {
     const {employeeId, companyId } = req.body;
     console.log("companyId ", req.user?.companyId);
@@ -218,7 +192,79 @@ const getAddedResource=wrapAsyncHandler(async(req,res)=>{
   return res.status(200).json(new ApiResponse(200,{resource},"Resource fetched successfully"));
 
 })
-  
+
+const getBookedResourceByOthers=wrapAsyncHandler(async(req,res,)=>{
+  const user=await User.findById(req.user?._id);
+  const bookedResources = await Booking.aggregate([
+    {
+      $match: {
+        companyId: new mongoose.Types.ObjectId(user.companyId),
+      },
+    },
+    {
+      $lookup: {
+        from: 'resources',
+        localField: 'resourceId',
+        foreignField: '_id',
+        as: 'resourceDetails',
+      },
+    },
+    {
+      $unwind: '$resourceDetails',
+    },
+    {
+      $unwind: '$bookedResources',
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'bookedResources.bookedBy',
+        foreignField: '_id',
+        as: 'bookedByUser',
+      },
+    },
+    {
+      $unwind: '$bookedByUser',
+    },
+    {
+      $group: {
+        _id: '$_id',
+        companyId: { $first: '$companyId' },
+        resourceId: { $first: '$resourceId' },
+        resourceDetails: { $first: '$resourceDetails' },
+        bookedResources: {
+          $push: {
+            bookedBy: '$bookedByUser',
+            countToBook: '$bookedResources.countToBook',
+            bookFrom: '$bookedResources.bookFrom',
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        // companyId: 1,
+        resourceId: 1,
+        resourceDetails: {
+          _id: 1,
+          type: 1,
+          description: 1,
+          count: 1,
+        },
+        bookedResources: 1,
+      },
+    },
+  ]);
+
+  if (!bookedResources.length) {
+    return res.status(404).json(new ApiResponse(404, {}, "No booked resources found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, { bookedResources }, "Booked resources fetched successfully"));
+
+
+});
   
 export{
     addResource,
@@ -227,5 +273,6 @@ export{
     deleteResource,
     toVerifyEmployee,
     getUnverifiedUser,
-    getAddedResource
+    getAddedResource,
+    getBookedResourceByOthers
 }

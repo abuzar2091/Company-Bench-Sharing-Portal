@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import BookedResourcesByOthers from './BookedResourcesByOthers';
 axios.defaults.withCredentials = true;
 
 function AdminPanel() {
@@ -34,7 +35,7 @@ function AdminPanel() {
  
 
   return (
-    <div className="flex   flex-col min-h-screen ">
+    <div className="flex flex-col min-h-screen ">
       <h1 className="text-center font-semibold text-3xl">Admin Panel</h1>
        <div className='flex justify-between  xs:flex-row flex-col'>
 
@@ -48,8 +49,9 @@ function AdminPanel() {
         <Button onClick={addResource}>Add Resource</Button>
       </div>
       </div> 
-      <h2 className='text-center font-semibold text-3xl'>Booked Resources</h2>
-
+      <h2 className='text-center font-semibold text-3xl mt-4'>Booked Resources By Others</h2>
+      
+       <BookedResourcesByOthers/>
     </div>
   );
 }

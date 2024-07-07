@@ -11,6 +11,7 @@ import SeeAllResource from "./admin/SeeAllResource"
 import UpdateResource from "./admin/UpdateResource"
 import MyProfile from "./components/MyProfile"
 import PageNotFound from "./share/PageNotFound"
+import BookedByUser from "./admin/BookedByUser"
 
 function App() {
   return (
@@ -26,6 +27,14 @@ function App() {
             element={
               <AdminRoute>
                 <AdminPanel />
+              </AdminRoute>
+            } 
+          />
+           <Route 
+            path="/admin/booked-resources-by-user" 
+            element={
+              <AdminRoute>
+                <BookedByUser/>
               </AdminRoute>
             } 
           />

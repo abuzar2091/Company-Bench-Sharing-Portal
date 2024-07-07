@@ -153,7 +153,7 @@ const loginUser = wrapAsyncHandler(async (req, res) => {
   });   
 
 const bookResources =wrapAsyncHandler(async(req,res)=>{
-       const {resourceId,count}=req.body;
+  const {resourceId,count}=req.body;
  console.log(req.body);
   const userId=req.user?._id
     if(!resourceId){
@@ -162,25 +162,45 @@ const bookResources =wrapAsyncHandler(async(req,res)=>{
     console.log("res id",resourceId);
     const resource=await Resource.findById(resourceId);
     if(!resource) throw new ApiError(404,"Resource not found");
-    const bookedBy=userId;
     const companyId=resource.companyId;
-    const user=await User.findById(bookedBy);
+    const user=await User.findById(userId);
     const bookedResource=await resource.bookResource(user,count);
-    if (bookedResource >= 0) {
-        let booking = await Booking.findOne({ resourceId, bookedBy });
+    if (bookedResource >= 1) {
+      let booking = await Booking.findOne({ resourceId });
+
+      if (booking) {
+        // Check if the user has already booked this resource
+        const userBooking = booking.bookedResources.find(
+          (resource) => resource.bookedBy.toString() === userId.toString()
+        );
     
-        if (booking) {
-          booking.countToBook += bookedResource;
-          await booking.save();
+        if (userBooking) {
+          // User has already booked this resource, increase the count
+          userBooking.countToBook +=bookedResource;
         } else {
-          booking = await Booking.create({
-            resourceId,
-            bookedBy,
-            companyId,
+          // User has not booked this resource yet, add a new booking entry
+          booking.bookedResources.push({
+            bookedBy: userId,
             countToBook: bookedResource
           });
         }
-        return res.status(200).json(new ApiResponse(200,{booking},"Resource Successfully Booked"));
+      } else {
+        // Resource is being booked for the first time
+        booking = await Booking.create({
+          companyId:companyId, // Replace with your company ID
+          resourceId: resourceId,
+          bookedResources: [
+            {
+              bookedBy: userId,
+              countToBook:bookedResource,
+            },
+          ],
+        });
+      }
+    
+      // Save the updated or new booking
+      await booking.save();
+      return res.status(200).json(new ApiResponse(200,{booking},"Resource Successfully Booked"));
     }else{
         return res.status(404).json(new ApiResponse(404,{},"Empty stock"));
     }
