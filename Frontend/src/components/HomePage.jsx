@@ -4,9 +4,11 @@ import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
 import { useMessageContext } from '@/context/MessageContext';
+import ToBecomeAdminForm from './ToBecomeAdminForm';
 axios.defaults.withCredentials = true;
 function HomePage() {
     const [showResources, setShowResources] = useState(null);
+    const [isLoading,setIsLoading]=useState(true);
     const [selectedCounts, setSelectedCounts] = useState({});
     const navigate=useNavigate();
     const { message, messageType,setMessage,setMessageType } = useMessageContext();
@@ -17,6 +19,7 @@ function HomePage() {
                 .then((res) => {
                     console.log(res.data.data.resources);
                     setShowResources(res.data.data.resources);
+                    setIsLoading(false);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -57,8 +60,11 @@ function HomePage() {
         setSelectedCounts((prev) => ({
             ...prev,
             [resourceId]: value,
-        }));
+        }));        
     };
+    if(isLoading){
+        return <div className='min-h-screen bg-blue-100 flex gap-4 pt-5 justify-center'><Loader/>Loading...</div>
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-100">
@@ -95,6 +101,7 @@ function HomePage() {
                     </div>
                 ))}
             </div>
+            <ToBecomeAdminForm/>
         </div>
     );
 }

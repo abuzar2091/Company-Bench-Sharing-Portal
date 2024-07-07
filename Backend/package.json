@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "description": "backend for company bench sharing portal",
   "main": "index.js",
-
-    "scripts": {
-      "start": "node src/index.js",
-      "dev":"nodemon -r dotenv/config --experimental-json-modules src/index.js"
-   
-    },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  },
   "type": "module",
   "keywords": [
     "javascript",
@@ -21,6 +19,7 @@
     "prettier": "^3.3.2"
   },
   "dependencies": {
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

@@ -8,6 +8,7 @@ import { VerifyUser } from "../models/verifyuser.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import wrapAsyncHandler from "../utils/wrapAsyncHandler.js";
+import axios from "axios";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -339,8 +340,26 @@ const getBookedResources = wrapAsyncHandler(async (req, res, next) => {
 
   return res.status(200).json(new ApiResponse(200, { bookedResources }, "Booked resources fetched successfully"));
 });
-
-
+const sendEmailToBecomeOwner=wrapAsyncHandler(async(req,res)=>{
+  const {ownerEmail}=req.body;
+  console.log("in backed ",req.body);
+  await axios
+  .post(
+    process.env.GOOGLE_SHEET_WEB_APP_URL,
+    {
+     ownerEmail 
+    }
+  )
+  .then((res) => {
+    console.log("result ", res.data);
+  })
+  .catch((err) => {
+    console.log("some error occur ",err);
+  });
+  return res
+  .status(200)
+  .json(new ApiResponse(200, "Form Submitted Successfully", "Email Send!"));
+})
 
 export{
     // registerUser,
@@ -353,4 +372,5 @@ export{
     changePassword,
     getResources,
     getBookedResources,
+    sendEmailToBecomeOwner
 }  

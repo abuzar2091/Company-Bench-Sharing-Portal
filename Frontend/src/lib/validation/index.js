@@ -14,3 +14,7 @@ export const AddResourceValidation = z.object({
      description: z.string().min(5,{message:"To Short"}),
      count:z.string()
   });  
+
+export const formValidationSchema = z.object({
+    ownerEmail: z.string().email({ message: 'Invalid email address' }),
+});  
