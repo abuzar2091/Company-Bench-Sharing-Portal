@@ -30,58 +30,58 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
   };
 
-// const registerUser = wrapAsyncHandler(async (req, res, next) => {
-//     //   //get the user info from frontend
-//     //   //perform validation--not empty
-//     //   //check if user already exits:username ,email
-//     //   // create user obj and save in db
-//     //   //remove password and refresh token from the respone
-//     //   //check for the user creation
-//     //   //return respone
-//     const { username, email, password,companyId,role} = req.body;
-//     console.log("body part ",req.body);
-//     if (
-//       [username, email, password,companyId].some((field) => field?.trim() === "")
-//     ) {
-//       throw new ApiError(400, "All fields are required");
-//     }
-//     const exitedUser = await User.findOne({
-//       $or: [{ username }, { email }],
-//     });
-//     if (exitedUser) {
-//       throw new ApiError(409, "User with username or email already exits");
-//     }
-//     const user = await User.create({
-//       username,
-//       email,
-//       password,
-//       companyId,
-//       role
-//     });
-//     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-//         user._id
-//       );
+const registerUser = wrapAsyncHandler(async (req, res, next) => {
+    //   //get the user info from frontend
+    //   //perform validation--not empty
+    //   //check if user already exits:username ,email
+    //   // create user obj and save in db
+    //   //remove password and refresh token from the respone
+    //   //check for the user creation
+    //   //return respone
+    const { username, email, password,companyId,role} = req.body;
+    console.log("body part ",req.body);
+    if (
+      [username, email, password,companyId].some((field) => field?.trim() === "")
+    ) {
+      throw new ApiError(400, "All fields are required");
+    }
+    const exitedUser = await User.findOne({
+      $or: [{ username }, { email }],
+    });
+    if (exitedUser) {
+      throw new ApiError(409, "User with username or email already exits");
+    }
+    const user = await User.create({
+      username,
+      email,
+      password,
+      companyId,
+      role
+    });
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+        user._id
+      );
 
-//       const createdUser = await User.findById(user._id).select(
-//         "-password  -refreshToken"
-//       );
+      const createdUser = await User.findById(user._id).select(
+        "-password  -refreshToken"
+      );
     
-//       const options = {
-//         httpOnly: true,
-//         secure: true,
-//       };
-//       return res
-//         .status(201)
-//         .cookie("accessToken", accessToken, options)
-//         .cookie("refreshToken", refreshToken, options)
-//         .json(
-//           new ApiResponse(
-//             200,
-//             { createdUser },
-//             "User Registered Successfully"
-//           )
-//         );
-//   });
+      const options = {
+        httpOnly: true,
+        secure: true,
+      };
+      return res
+        .status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+          new ApiResponse(
+            200,
+            { createdUser },
+            "User Registered Successfully"
+          )
+        );
+  });
 
 const loginUser = wrapAsyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -362,7 +362,7 @@ const sendEmailToBecomeOwner=wrapAsyncHandler(async(req,res)=>{
 })
 
 export{
-    // registerUser,
+    registerUser,
     loginUser,
     bookResources,
     releaseResources,
