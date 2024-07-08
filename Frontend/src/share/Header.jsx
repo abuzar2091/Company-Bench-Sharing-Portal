@@ -24,7 +24,7 @@ function Header() {
         e.preventDefault();
         setIsAuthenticated(false);
         setUser(INITIAL_USER);
-        await axios.post(`/api/v1/users/logout`)
+        await axios.post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/logout`)
             .then((res) => {
                 console.log(res);
             }).catch((err) => {

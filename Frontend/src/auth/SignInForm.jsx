@@ -269,7 +269,9 @@ function SignInForm() {
   //  ,{
   //   withCredentials: true, // Ensure cookies are sent with the request
   // }
-      await axios.post(`/api/v1/users/login`,values)
+      await axios.post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/login`,values, {
+        withCredentials: true, // Ensure cookies are sent with the request
+      })
         .then((res) => {
           console.log(res);
           setMessage("User Logged In Successfully");

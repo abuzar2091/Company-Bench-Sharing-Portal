@@ -41,7 +41,9 @@ function UpdateResource() {
       setSubmitForm(true);
 
       await axios
-        .post(`/api/v1/admin/updateresource/${resource?._id}`, values)
+        .post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/admin/updateresource/${resource?._id}`, values,{
+          withCredentials:true
+        })
         .then((res) => {
           console.log(res);
           setMessageType("success");

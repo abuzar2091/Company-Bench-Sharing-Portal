@@ -23,7 +23,7 @@ function HomePage() {
   useEffect(() => {
     const getResources = async () => {
       await axios
-        .get(`/api/v1/application/getresources/${filter}`)
+        .get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getresources/${filter}`)
         .then((res) => {
           console.log(res.data.data.resources);
           setShowResources(res.data.data.resources);

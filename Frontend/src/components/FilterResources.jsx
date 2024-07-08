@@ -21,10 +21,8 @@ function FilterResources({searchBarValue,setSearchBarValue}) {
   const handleSetBooked=()=>{
     setFilter("booked");
   }
-//   const [searchBarValue, setSearchBarValue] = useState("");
   return (
     <div className="flex flex-col ">
-        {/* <Header/> */}
      <div className='hidden xs:flex mt-4 sticky  top-[85px]  py-4 left-0 right-0 bg-white font-semibold justify-center sm:gap-20 xs:gap-10 gap-4'>
         <button className={`${filter==='available'?'text-blue-400':``} `} onClick={()=>{handleSetAvailable()}}>Available Resources</button>
          <button  className={`${filter==='booked'?'text-blue-400':``} `}  onClick={()=>{handleSetBooked()}}>Booked Resources</button>

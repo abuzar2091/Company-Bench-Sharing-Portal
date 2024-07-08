@@ -3,6 +3,7 @@ import axios from "axios"
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useMessageContext } from '@/context/MessageContext';
+import Loader from '@/components/Loader';
 axios.defaults.withCredentials = true;
 
 function SeeAllResource() {
@@ -12,7 +13,9 @@ function SeeAllResource() {
     const navigate = useNavigate();
     useEffect(()=>{
         const getAddedResource=async()=>{
-          await axios.get(`/api/v1/admin/getaddedresource`)
+          await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/admin/getaddedresource`,{
+            withCredentials:true
+          })
           .then((res)=>{
             setAddedReSource(res.data.data.resource);
             console.log(res.data.data.resource);
@@ -38,7 +41,9 @@ function SeeAllResource() {
         navigate('/admin/update-resource', { state:  {resource}  });
       };
       const deleteResource = async(resourceId) => {
-       await axios.post(`/api/v1/admin/deleteresource/${resourceId}`)
+       await axios.post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/admin/deleteresource/${resourceId}`,{
+        withCredentials:true
+       })
        .then((res)=>{
         console.log(res.data);
         setMessage("Resource Deleted Successfully");
@@ -65,7 +70,7 @@ function SeeAllResource() {
  if(loading){ 
  return (<div className='min-h-screen flex flex-col items-center'>
     <h1>See All Resource</h1>
-    <p className=''>Loading Resources....</p>
+    <p className='flex'><Loader/> Loading Resources....</p>
 </div>);
  }
 

@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+axios.defaults.withCredentials=true;
 
 function CompanyID() {
     const [companyData,setCompanyData]=useState(null);
     useEffect(()=>{
         const getCompanyDetails=async()=>{
-             await axios.get("/api/v1/application/getCompanyDetails")
+             await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getCompanyDetails`)
              .then((res)=>{
                 setCompanyData(res.data.data.company);
                 console.log(res.data.data.company);

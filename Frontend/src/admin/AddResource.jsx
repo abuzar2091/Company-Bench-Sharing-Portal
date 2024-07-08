@@ -47,7 +47,9 @@ function  AddResource() {
     try {
       setSubmitForm(true);
       await axios
-        .post(`/api/v1/admin/addresource`, values)
+        .post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/admin/addresource`, values,{
+          withCredentials:true
+        })
         .then((res) => {
           console.log(res);
           setMessage("Resource Added Successfully");

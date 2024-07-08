@@ -13,7 +13,7 @@ function MyProfile() {
     const { message, messageType,setMessage,setMessageType } = useMessageContext();
     useEffect(() => {
         const getBookedResource = async () => {
-            await axios.get(`/api/v1/users/getbookedresources`)
+            await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/getbookedresources`)
                 .then((res) => {
                     setIsLoading(false);
                         setBookedResources(res.data.data.bookedResources);
@@ -28,7 +28,7 @@ function MyProfile() {
     }, []);
     const handleReleaseResource = async (resourceId, count) => {
         setIsReleasing(true);
-        await axios.post(`/api/v1/users/releaseresources`, { resourceId, count })
+        await axios.post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/releaseresources`, { resourceId, count })
             .then((res) => {
                 console.log(res.data);
                 

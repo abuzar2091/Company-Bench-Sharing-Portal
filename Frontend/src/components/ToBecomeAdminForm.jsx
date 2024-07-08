@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Input } from './ui/input'
 import axios from 'axios';
 import { formValidationSchema } from '@/lib/validation';
+axios.defaults.withCredentials=true
 
 function ToBecomeAdminForm() {
     const [submitform,setSubmitForm]=useState(false)
@@ -13,7 +14,7 @@ function ToBecomeAdminForm() {
           try {
           setSubmitForm(true);
           formValidationSchema.parse({ownerEmail});
-          await axios.post(`/api/v1/users/sendEmailToBecomeOwner`
+          await axios.post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/sendEmailToBecomeOwner`
             ,{ownerEmail})
           .then((res)=>{
             console.log(res.data.data);

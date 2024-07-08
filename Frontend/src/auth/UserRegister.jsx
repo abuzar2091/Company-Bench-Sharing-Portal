@@ -64,7 +64,9 @@ useEffect(() => {
         return;
       }
       await axios
-        .post(`/api/v1/users/signup`, values)
+        .post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/signup`,values,{
+          withCredentials: true, // Ensure cookies are sent with the request
+        })
         .then((res) => {
           console.log(res.data);
           setMessage("Registration request submitted. Await admin approval");

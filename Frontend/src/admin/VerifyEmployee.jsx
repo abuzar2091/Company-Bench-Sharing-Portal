@@ -14,7 +14,7 @@ function VerifyEmployee() {
   const handleVerifyUser = async (employeeId, companyId) => {
     setIsVerifyingId(employeeId);
     await axios
-      .post(`/api/v1/admin/verifyemployee`, { employeeId, companyId })
+      .post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/admin/verifyemployee`, { employeeId, companyId })
       .then((res) => {
         console.log(res.data);
         setMessage("Employee Verified Succesfully");

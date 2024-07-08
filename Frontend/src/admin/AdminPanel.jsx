@@ -11,7 +11,9 @@ function AdminPanel() {
 
   useEffect(() => {
     const getUnverifiedRequest = async () => {
-      await axios.get(`/api/v1/admin/getunverifieduser`)
+      await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/admin/getunverifieduser`,{
+        withCredentials:true
+      })
         .then((res) => {
           console.log(res.data);
           setUnverifiedUser(res.data);
