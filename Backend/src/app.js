@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 import userRouter from "./routes/user.route.js"
 import adminRouter from "./routes/admin.route.js"
-import applicationRouter from "./routes/application.js"
+import applicationRouter from "./routes/application.route.js"
 app.use("/api/v1/users",userRouter)
 app.use("/api/v1/admin",adminRouter)
 app.use("/api/v1/application",applicationRouter)

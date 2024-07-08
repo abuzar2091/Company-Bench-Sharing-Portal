@@ -220,19 +220,32 @@ const releaseResources =wrapAsyncHandler(async(req,res)=>{
     if(!resource) throw new ApiError(404,"Resource not found");
     const user=await User.findById(bookedBy);
     const isReleasedResource=await resource.releaseResource(user,count);
-
+        console.log("kya release hua");
     if(isReleasedResource===1){
-        let booking = await Booking.findOne({ resourceId, bookedBy });
-        console.log("booking ",booking);
-        if (booking) {
-          booking.countToBook -= count;
-          await booking.save();
-          console.log("booking ",booking);
-          if(booking.countToBook===0){
-            await Booking.findByIdAndDelete(booking._id);
-         }
+      try {
+        let booking = await Booking.findOne({ resourceId });
+    
+        if (!booking) {
+          return res.status(200).json(new ApiResponse( 404,{}, 'Booking not found') );
+        }
+    
+        let userBooking = booking.bookedResources.find((user) => user.bookedBy.toString() === bookedBy);
+    
+        if (!userBooking) {
+          return res.status(200).json(new ApiResponse( 404,{}, 'User Booking not found'));
+        }
+    
+        userBooking.countToBook -= count;
+    
+        if (userBooking.countToBook <= 0) {
+          booking.bookedResources = booking.bookedResources.filter((user) => user.bookedBy.toString() !== bookedBy);
+        }
+    
+        await booking.save();
         return res.status(200).json(new ApiResponse(200,{booking},"Resource Successfully Released"));
-    }
+      } catch (error) {
+        return res.status(200).json(new ApiResponse(200,{},{message: error.message}));
+      }  
 }else{
         return res.status(404).json(new ApiResponse(404,{},"Resource Successfully Released"));
     }

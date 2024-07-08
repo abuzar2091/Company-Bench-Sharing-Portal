@@ -1,7 +1,8 @@
 import { INITIAL_USER, useUserContext } from '@/context/AuthContext';
 import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useFilterContext } from '@/context/FilterContext';
 axios.defaults.withCredentials = true;
 
 function Header() {
@@ -16,6 +17,8 @@ function Header() {
 
     const [authStatus, setAuthStatus] = useState(isAuthenticated);
     const [menuOpen, setMenuOpen] = useState(false);
+    const { filter, setFilter } = useFilterContext();
+    const {pathname}=useLocation();
 
     const handleSignOut = async (e) => {
         e.preventDefault();
@@ -32,6 +35,7 @@ function Header() {
     let navItems = [
         { name: "Home", redirection: "/", active: true },
         { name: "Company-Id", redirection: "/company-id", active: true },
+        { name: "Admin", redirection: "/admin", active: true },
         { name: "Sign-In", redirection: "/login", active: !isAuthenticated },
         { name: "Sign-Up", redirection: "/signup", active: !isAuthenticated },
     ];
@@ -39,21 +43,31 @@ function Header() {
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
-
+   
+     
+    const handleShowResource = (status) => {
+        setFilter(status);
+        toggleMenu();
+        navigate('/');
+    };
+   
+  
+    
+ 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg">
             <div className="flex justify-between items-center p-4">
                 <Link to="/">
-                    <img className="h-16 ml-4" src="/images/logo4.png" alt="logo" />
+                    <img className="h-16 sm:ml-0 md:ml-4 ml-4" src="/images/logo4.png" alt="logo" />
                 </Link>
-                <div className="xs:hidden flex items-center mr-4">
+                <div className="sm:hidden flex items-center mr-4">
                     <button onClick={toggleMenu} className="text-gray-900">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
                 </div>
-                <ul className="hidden xs:flex sm:gap-8 xs:gap-3 mr-4">
+                <ul className="hidden sm:flex md:gap-7 gap-4  md:mr-4">
                     {navItems.map((item) =>
                         item.active ? (
                             <li key={item.name}>
@@ -135,6 +149,23 @@ function Header() {
                             </Link>
                         </div>
                     )}
+
+                    {
+                        <div className="flex flex-col gap-4">
+                        <button
+                            className={`px-4 py-2 rounded ${pathname==="/" && filter === 'available' ? `text-blue-400` : ''}`}
+                            onClick={() => handleShowResource('available')}
+                        >
+                            Available Resources
+                        </button>
+                        <button 
+                            className={`px-4 py-2 rounded ${pathname==="/" && filter === 'booked' ? `text-blue-400` : ''}  `}
+                            onClick={() => handleShowResource('booked')}
+                        >
+                            Booked Resources
+                        </button>
+                    </div>
+                    }
                 </ul>
             </div>
         </header>
