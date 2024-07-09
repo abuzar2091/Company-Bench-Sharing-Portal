@@ -21,10 +21,8 @@ axios.defaults.withCredentials = true;
 
 function  AddResource() {
   const [submitform, setSubmitForm] = useState(false);
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
   const {message, messageType,setMessage,setMessageType } = useMessageContext();
   const navigate = useNavigate();
-
   const form = useForm({
     resolver: zodResolver(AddResourceValidation),
     defaultValues: {
