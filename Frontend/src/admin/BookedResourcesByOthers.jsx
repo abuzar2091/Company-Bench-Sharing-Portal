@@ -16,8 +16,8 @@ function BookedResourcesByOthers() {
             withCredentials:true
           })
             .then((res)=>{
-                console.log(res.data.data.bookedResources);
-                setBookedResources(res.data.data.bookedResources);
+                console.log(res?.data?.data?.bookedResources);
+                setBookedResources(res?.data?.data?.bookedResources);
             })
             .catch((err)=>{
                 console.log(err);

@@ -41,7 +41,7 @@ function HomePage() {
     debouncedSearchBarValue?.length > 0 &&
     showResources?.length > 0 &&
     showResources?.filter((resource) =>
-      resource.description.toLowerCase().includes(searchBarValue.toLowerCase())
+      resource?.description?.toLowerCase().includes(searchBarValue?.toLowerCase())
     );
 //   console.log(filteredResources);
   const [currentText, setCurrentText] = useState("");
@@ -52,7 +52,7 @@ function HomePage() {
     if (message) {
       const timer = setTimeout(() => {
         setMessage("");
-      }, 7000); // 10 seconds
+      }, 5000); // 10 seconds
 
       return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
     }
@@ -96,7 +96,7 @@ function HomePage() {
     await axios
       .post(`/api/v1/users/bookresources`, { resourceId, count })
       .then((res) => {
-        console.log(res.data);
+        console.log(res?.data);
         setIsBooking(false);
         setMessage("Resource Booked Successfully");
         setMessageType("success");
@@ -124,7 +124,7 @@ function HomePage() {
     );
   }
 
-  console.log("filter value bar ", searchBarValue);
+  console.log("filter value bar ", filter);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -150,7 +150,7 @@ function HomePage() {
           {message}
         </div>
       )}
-      <FilterResources setSearchBarValue={setSearchBarValue} />
+      <FilterResources searchBarValue={searchBarValue} setSearchBarValue={setSearchBarValue} />
 
       <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 m-6">
         {debouncedSearchBarValue.length === 0

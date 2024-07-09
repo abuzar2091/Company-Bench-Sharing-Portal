@@ -37,7 +37,7 @@ function  AddResource() {
     if (message) {
       const timer = setTimeout(() => {
         setMessage('');
-      }, 7000); // 10 seconds
+      }, 5000); // 5 seconds
 
       return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
     }

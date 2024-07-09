@@ -68,7 +68,7 @@ useEffect(() => {
           withCredentials: true, // Ensure cookies are sent with the request
         })
         .then((res) => {
-          console.log(res.data);
+          console.log(res?.data);
           setMessage("Registration request submitted. Await admin approval");
           setMessageType('success');
           navigate("/");

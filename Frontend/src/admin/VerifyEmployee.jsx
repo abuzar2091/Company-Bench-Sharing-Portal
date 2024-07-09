@@ -21,7 +21,7 @@ function VerifyEmployee() {
         setMessageType("success");
         
         // Remove the verified user from the list
-        const updatedUserList = userList.filter((user) => user._id !== employeeId);
+        const updatedUserList = userList?userList.filter((user) => user._id !== employeeId):userList;
         setUserList(updatedUserList);
         setIsVerifyingId(null);
       })
@@ -37,7 +37,7 @@ function VerifyEmployee() {
     if (message) {
       const timer = setTimeout(() => {
         setMessage('');
-      }, 7000); // 10 seconds
+      }, 5000); // 5 seconds
 
       return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
     }

@@ -15,8 +15,8 @@ function AdminPanel() {
         withCredentials:true
       })
         .then((res) => {
-          console.log(res.data);
-          setUnverifiedUser(res.data);
+          console.log(res?.data);
+          setUnverifiedUser(res?.data);
         })
         .catch((err) => {
           console.log('error ', err);

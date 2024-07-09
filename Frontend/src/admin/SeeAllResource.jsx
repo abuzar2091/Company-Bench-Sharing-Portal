@@ -17,8 +17,8 @@ function SeeAllResource() {
             withCredentials:true
           })
           .then((res)=>{
-            setAddedReSource(res.data.data.resource);
-            console.log(res.data.data.resource);
+            setAddedReSource(res?.data?.data?.resource);
+            console.log(res?.data?.data?.resource);
             setLoading(false);
           })
           .catch((err)=>{
@@ -31,7 +31,7 @@ function SeeAllResource() {
         if (message) {
           const timer = setTimeout(() => {
             setMessage('');
-          }, 7000); // 10 seconds
+          }, 5000); // 5 seconds
     
           return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
         }
@@ -61,7 +61,7 @@ function SeeAllResource() {
         if (message) {
           const timer = setTimeout(() => {
             setMessage('');
-          }, 7000); // 10 seconds
+          }, 5000); // 5 seconds
     
           return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
         }

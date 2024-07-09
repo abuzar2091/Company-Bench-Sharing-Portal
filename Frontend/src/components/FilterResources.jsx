@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Input } from "./ui/input";
-import Header from "@/share/Header";
 import { useFilterContext } from "@/context/FilterContext";
 
 function FilterResources({searchBarValue,setSearchBarValue}) {
@@ -23,7 +22,7 @@ function FilterResources({searchBarValue,setSearchBarValue}) {
   }
   return (
     <div className="flex flex-col ">
-     <div className='hidden xs:flex mt-4 sticky  top-[85px]  py-4 left-0 right-0 bg-white font-semibold justify-center sm:gap-20 xs:gap-10 gap-4'>
+     <div className='hidden sm:flex mt-4 sticky  top-[85px]  py-4 left-0 right-0 bg-white font-semibold justify-center sm:gap-20 xs:gap-10 gap-4'>
         <button className={`${filter==='available'?'text-blue-400':``} `} onClick={()=>{handleSetAvailable()}}>Available Resources</button>
          <button  className={`${filter==='booked'?'text-blue-400':``} `}  onClick={()=>{handleSetBooked()}}>Booked Resources</button>
        

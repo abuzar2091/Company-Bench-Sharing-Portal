@@ -8,8 +8,8 @@ function CompanyID() {
         const getCompanyDetails=async()=>{
              await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getCompanyDetails`)
              .then((res)=>{
-                setCompanyData(res.data.data.company);
-                console.log(res.data.data.company);
+                setCompanyData(res?.data?.data?.company);
+                console.log(res?.data?.data?.company);
              })
              .catch((err)=>{
                 console.log(err);

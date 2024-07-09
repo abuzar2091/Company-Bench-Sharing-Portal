@@ -30,15 +30,10 @@ const AuthProvider = ({ children }) => {
       const currentAccount= await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/get-current-user` ,{
         withCredentials: true, // Ensure cookies are sent with the request
       });  
-    //   .then((res)=>{
-    //   console.log(res);
-    // })
-    // .catch((err)=>{
-    //   console.log("error ",err);
-    // });
+   
         console.log("inside getcurr context");
         // const currentAccount = await getCurrentUSer();
-        console.log(currentAccount.data.data);
+        console.log(currentAccount?.data?.data);
       if (currentAccount?.data?.data) {
         setUser({
           id: currentAccount?.data?.data?._id,

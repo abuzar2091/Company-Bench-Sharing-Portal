@@ -30,13 +30,13 @@ function MyProfile() {
         setIsReleasing(true);
         await axios.post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/releaseresources`, { resourceId, count })
             .then((res) => {
-                console.log(res.data);
+                console.log(res?.data);
                 
                 setMessage("Resource Released Successfully");
                 setMessageType("success");
                 const updatedResources = bookedResources?.map((resource) => {
-                    if (resourceId === resource.resourceDetails._id) {
-                        const updatedCount = resource.bookedResources.countToBook - count;
+                    if (resourceId === resource?.resourceDetails._id) {
+                        const updatedCount = resource?.bookedResources?.countToBook - count;
                         if (updatedCount > 0) {
                             return {
                                 ...resource,
@@ -48,7 +48,7 @@ function MyProfile() {
                         }
                     }
                     return resource;
-                }).filter(resource => resource.bookedResources.countToBook > 0);
+                }).filter(resource => resource?.bookedResources?.countToBook > 0);
     
                 setBookedResources(updatedResources);
                 setIsReleasing(false);
@@ -88,7 +88,7 @@ function MyProfile() {
         if (message) {
           const timer = setTimeout(() => {
             setMessage('');
-          }, 7000); // 10 seconds
+          }, 5000); // 5 seconds
     
           return () => clearTimeout(timer); // Cleanup timer on unmount or if message changes
         }
