@@ -25,8 +25,8 @@ function HomePage() {
       await axios
         .get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getresources/${filter}`)
         .then((res) => {
-          console.log(res.data.data.resources);
-          setShowResources(res.data.data.resources);
+          console.log(res?.data?.data?.resources);
+          setShowResources(res?.data?.data?.resources);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -43,7 +43,7 @@ function HomePage() {
     showResources?.filter((resource) =>
       resource.description.toLowerCase().includes(searchBarValue.toLowerCase())
     );
-  console.log(filteredResources);
+//   console.log(filteredResources);
   const [currentText, setCurrentText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const words = "Sharing Portal";

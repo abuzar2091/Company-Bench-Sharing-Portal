@@ -16,7 +16,7 @@ function MyProfile() {
             await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/getbookedresources`)
                 .then((res) => {
                     setIsLoading(false);
-                        setBookedResources(res.data.data.bookedResources);
+                        setBookedResources(res?.data?.data?.bookedResources);
                 
                     console.log("response ",res);
                 })

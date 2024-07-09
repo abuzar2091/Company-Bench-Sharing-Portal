@@ -39,7 +39,7 @@ const AuthProvider = ({ children }) => {
         console.log("inside getcurr context");
         // const currentAccount = await getCurrentUSer();
         console.log(currentAccount.data.data);
-      if (currentAccount) {
+      if (currentAccount?.data?.data) {
         setUser({
           id: currentAccount?.data?.data?._id,
           username: currentAccount?.data.data.username,
