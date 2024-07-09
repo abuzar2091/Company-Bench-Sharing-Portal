@@ -41,11 +41,11 @@ const AuthProvider = ({ children }) => {
         console.log(currentAccount.data.data);
       if (currentAccount) {
         setUser({
-          id: currentAccount.data.data._id,
-          username: currentAccount.data.data.username,
-          companyId:currentAccount.data.data.companyId,
-          email: currentAccount.data.data.email,
-          role:currentAccount.data.data.role,
+          id: currentAccount?.data?.data?._id,
+          username: currentAccount?.data.data.username,
+          companyId:currentAccount?.data.data.companyId,
+          email: currentAccount?.data.data.email,
+          role:currentAccount?.data.data.role,
            });
         setIsAuthenticated(true);
         

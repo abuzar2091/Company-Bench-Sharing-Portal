@@ -137,12 +137,16 @@ const toVerifyEmployee = wrapAsyncHandler(async (req, res, next) => {
     if (!pendingUser) {
       return res.status(404).json(new ApiResponse(404, {}, "Pending user not found"));
     }
+    if(!company){
+      return res.status(404).json(new ApiResponse(404, {}, "User company not found"));
+
+    }
     
     console.log("Pending User: ", pendingUser);
   
    // console.log("Company Token: ", req.company);
   
-    if (companyId.toString() === company._id.toString()) {
+    if (companyId.toString() === company?._id.toString()) {
       const newUser = new User({
         username: pendingUser.username,
         email: pendingUser.email,
@@ -163,7 +167,7 @@ const toVerifyEmployee = wrapAsyncHandler(async (req, res, next) => {
         return res.status(500).json(new ApiResponse(500, {}, "Internal Server Error"));
       }
     } else {
-      await VerifyUser.findByIdAndDelete(userId);
+      await VerifyUser.findByIdAndDelete(employeeId);
       return res.status(200).json(
         new ApiResponse(200, {}, "Verification Rejected")
       );
