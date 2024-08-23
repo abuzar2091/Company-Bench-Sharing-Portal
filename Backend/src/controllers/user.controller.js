@@ -29,7 +29,6 @@ const generateAccessAndRefreshToken = async (userId) => {
     
   }
   };
-
 const registerUser = wrapAsyncHandler(async (req, res, next) => {
     //   //get the user info from frontend
     //   //perform validation--not empty

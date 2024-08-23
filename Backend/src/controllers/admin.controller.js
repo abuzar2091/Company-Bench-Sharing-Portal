@@ -27,6 +27,34 @@ const createCompany=wrapAsyncHandler(async(req,res,next)=>{
       return res.status(201).json(new ApiResponse(201,{company},"Company created successfully"));
 
 })
+
+const updateCompanyDetails=wrapAsyncHandler(async(req,res,next)=>{
+  const {companyName,companyId,description,location}=req.body;
+  if(!companyId){
+    throw new ApiError(400, "Company ID is required");
+  }
+  if (!mongoose.Types.ObjectId.isValid(companyId)) {
+    throw new ApiError(400, "Invalid company Id");
+  }
+ 
+  const updateCompanyInfo=await Company.findByIdAndUpdate(
+      companyId,
+      {
+        companyName,
+        description,
+        location,
+      },
+      { new: true, runValidators: true }
+);
+
+if (!updateCompanyInfo) {
+  throw new ApiError(404, "company not found");
+}
+console.log("info updated ",updateCompanyInfo);
+
+return res.status(200).json(new ApiResponse(200, {updateCompanyInfo}, "Company Info Updated Successfully"));
+});
+
 const addResource=wrapAsyncHandler(async(req,res,next)=>{
 
     const {type,description,count}=req.body;
@@ -278,5 +306,6 @@ export{
     toVerifyEmployee,
     getUnverifiedUser,
     getAddedResource,
-    getBookedResourceByOthers
+    getBookedResourceByOthers,
+    updateCompanyDetails
 }
