@@ -204,7 +204,7 @@ function HomePage() {
             filteredResources.map((resource) => (
               <div
                 key={resource?._id}
-                className="flex flex-col justify-between gap-2 text-white text-center sm:p-8 p-3 bg-red-400 rounded-lg"
+                className="flex flex-col justify-between gap-2 text-white text-center sm:p-8 p-3 bg-blue-400 rounded-lg"
               >
                 <p>Type: {resource.type}</p>
                 <p>Description: {resource.description}</p>
