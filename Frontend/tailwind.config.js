@@ -22,16 +22,12 @@ module.exports = {
     //     },
     // },
     screens: {
-      
-      // => @media (min-width: 576px) { ... }
       xxs:'20px',
       xs:'340px',
       sm:'520px',
       md: '640px',
-      // => @media (min-width: 960px) { ... }
       lg: '768px',
       xl:'1024px'
-      // => @media (min-width: 1440px) { ... }
       
     },
     extend: {
