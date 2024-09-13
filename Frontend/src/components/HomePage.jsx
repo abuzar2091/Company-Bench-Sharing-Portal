@@ -157,11 +157,7 @@ function HomePage() {
           ? showResources?.map((resource) => (
               <div
                 key={resource?._id}
-<<<<<<< HEAD
                 className="flex flex-col justify-between gap-3 text-white text-center sm:p-8 p-3 bg-blue-400 rounded-lg"
-=======
-                className="flex flex-col justify-between gap-2 text-white text-center sm:p-8 p-3  bg-red-400 rounded-lg"
->>>>>>> 084276773bdc74b8927a73f220ebe6f41cd9b3f4
               >
                 <p>Type: {resource.type}</p>
                 <p>Description: {resource.description}</p>
