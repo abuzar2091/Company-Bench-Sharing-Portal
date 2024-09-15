@@ -8,33 +8,58 @@ import ToBecomeAdminForm from "./ToBecomeAdminForm";
 import FilterResources from "./FilterResources";
 import useDebounce from "@/hooks/useDebounce";
 import { useFilterContext } from "@/context/FilterContext";
+
+import { useInView } from "react-intersection-observer";
+
 axios.defaults.withCredentials = true;
 function HomePage() {
-  const [showResources, setShowResources] = useState(null);
+  const { ref, inView } = useInView();
+  const [showResources, setShowResources] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCounts, setSelectedCounts] = useState({});
+  const [page,setPage]=useState(1);
+  const [hasNextPage,setHasNextPage]=useState(1);
   const navigate = useNavigate();
   const { message, messageType, setMessage, setMessageType } =
     useMessageContext();
   const { filter, setFilter } = useFilterContext();
   const [searchBarValue, setSearchBarValue] = useState("");
   const debouncedSearchBarValue = useDebounce(searchBarValue, 1000);
+    
+  const getResources = async () => {
+    setIsLoading(true);  // Start loading
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getresources/${filter}?page=${page}&limit=3`);
+      const { resources, hasMore } = response.data.data;
+
+      setShowResources((prev) => [...prev, ...resources]);
+      setHasNextPage(hasMore);
+      setIsLoading(false);  // End loading
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);  // End loading in case of error
+    }
+  };
 
   useEffect(() => {
-    const getResources = async () => {
-      await axios
-        .get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getresources/${filter}`)
-        .then((res) => {
-          console.log(res?.data?.data?.resources);
-          setShowResources(res?.data?.data?.resources);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    getResources();
+    setShowResources([]); 
+    setPage(1);            
+    getResources();        
   }, [filter]);
+
+  
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      setPage((prev) => prev + 1);
+    }
+  }, [inView]);
+
+  // Fetch more resources when page increases (pagination)
+  useEffect(() => {
+    if (page > 1) {
+      getResources();
+    }
+  }, [page]);
   const [isBooking, setIsBooking] = useState(false);
 
   const filteredResources =
@@ -94,7 +119,7 @@ function HomePage() {
     // Handle booking logic here
     setIsBooking(true);
     await axios
-      .post(`/api/v1/users/bookresources`, { resourceId, count })
+      .post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/bookresources`, { resourceId, count })
       .then((res) => {
         console.log(res?.data);
         setIsBooking(false);
@@ -117,9 +142,23 @@ function HomePage() {
   };
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-blue-100 flex gap-4 pt-5 justify-center">
+      <div className="min-h-screen bg-blue-100 flex flex-col gap-4">
+          <div
+        className=" flex py-5  justify-center  gap-5  bg-blue-400 w-full
+       "
+      >
+        <div className="flex justify-start gap-4 xl:min-w-[19%] lg:min-w-[32%] sm:min-w-[50%]
+        xs:min-w-[60%] min-w-[73%]">
+          <p className=" !font-semibold sm:text-2xl text-xl">Bench </p>
+          <p className=" text-white !font-semibold sm:text-2xl text-xl">
+            {currentText}
+           </p>
+        </div>
+        </div>
+      <div className="flex justify-center gap-5">
         <Loader />
-        Loading...
+        Loading..., have patience
+      </div>
       </div>
     );
   }
@@ -140,7 +179,6 @@ function HomePage() {
           </p>
         </div>
       </div>
-
       {message && (
         <div
           className={`message ${
@@ -200,11 +238,11 @@ function HomePage() {
               </div>
             ))
           : debouncedSearchBarValue.length > 0 &&
-            filteredResources.length > 0 &&
+            filteredResources.length > 0 ?
             filteredResources.map((resource) => (
               <div
                 key={resource?._id}
-                className="flex flex-col justify-between gap-2 text-white text-center sm:p-8 p-3 bg-red-400 rounded-lg"
+                className="flex flex-col justify-between gap-2 text-white text-center sm:p-8 p-3 bg-blue-400 rounded-lg"
               >
                 <p>Type: {resource.type}</p>
                 <p>Description: {resource.description}</p>
@@ -245,10 +283,20 @@ function HomePage() {
                   )}
                 </Button>
               </div>
-            ))}
+            )):(
+            <div className="semibold text-right w-200%">No Resource found...</div>
+              
+            )}
+     
       </div>
+      {hasNextPage && (
+        <div ref={ref} className="mt-10 flex justify-center">
+          <Loader />
+        </div>
+      )}
       <ToBecomeAdminForm />
     </div>
   );
 }
 export default HomePage;
+

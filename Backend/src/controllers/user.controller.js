@@ -152,7 +152,7 @@ const loginUser = wrapAsyncHandler(async (req, res) => {
       .json(new ApiResponse(200, {}, "User Logged Out Successfully!"));
   });   
 
-const bookResources =wrapAsyncHandler(async(req,res)=>{
+const bookResources=wrapAsyncHandler(async(req,res)=>{
   const {resourceId,count}=req.body;
  console.log(req.body);
   const userId=req.user?._id
@@ -167,7 +167,6 @@ const bookResources =wrapAsyncHandler(async(req,res)=>{
     const bookedResource=await resource.bookResource(user,count);
     if (bookedResource >= 1) {
       let booking = await Booking.findOne({ resourceId });
-
       if (booking) {
         // Check if the user has already booked this resource
         const userBooking = booking.bookedResources.find(
