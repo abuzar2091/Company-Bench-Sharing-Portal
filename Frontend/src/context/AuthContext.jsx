@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(INITIAL_USER);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  axios.defaults.withCredentials = true;
   const navigate = useNavigate();
   const checkAuthUser = async () => {
     setIsLoading(true);

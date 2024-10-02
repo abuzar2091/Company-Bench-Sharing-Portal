@@ -1,70 +1,59 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom'; // To detect route changes
+import React, { useEffect } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 axios.defaults.withCredentials = true;
 
 function CompanyID() {
-  const [companyData, setCompanyData] = useState([]); // Stores all the company data
-  const [page, setPage] = useState(1); // Pagination page
-  const [loading, setLoading] = useState(false); // To track the loading state
-  const [hasMore, setHasMore] = useState(true); // To track if there's more data to load
+  const companyID = 'company';
+  const { ref, inView } = useInView(); // useInView hook for detecting if the element is in the viewport
 
-  const location = useLocation(); // Used to detect route changes
-
-  useEffect(() => {
-    // Fetch data only if it's not cached
-    fetchCompanyDetails();
-  }, [location]); // Fetch the data only on the initial render or if the route changes
-
-  // Function to fetch company details in batches of 10
-  const fetchCompanyDetails = async () => {
-    if (loading || !hasMore) return; // Prevent multiple requests
-    setLoading(true);
-
-    try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getCompanyDetails?page=${page}&limit=10`);
-      const newData = res?.data?.data?.companies || [];
-
-      // Prevent duplicate data by checking if the new data already exists in the state
-      const filteredData = newData.filter(
-        (company) => !companyData.some((existingCompany) => existingCompany._id === company._id)
-      );
-
-      // Append filtered data (no duplicates)
-      setCompanyData((prev) => [...prev, ...filteredData]);
-
-      setPage(page + 1); // Increment the page
-
-      // If fewer than 10 records are returned, we've reached the end
-      if (newData.length < 10) {
-        setHasMore(false);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  // Fetch function for getting the company details with pagination
+  const fetchCompanyDetails = async ({ pageParam = 1 }) => {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/application/getCompanyDetails?page=${pageParam}`);
+    return {
+      data: response.data.data.companies, // Array of companies
+      hasMore: response.data.data.hasMore, // Check if there are more companies
+      nextPage: pageParam + 1, // Increment the page number for the next query
+    };
   };
 
-  // Infinite scroll function
-  const handleScroll = () => {
-    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight && !loading) {
-      fetchCompanyDetails();
-    }
-  };
+  // Infinite query hook for pagination
+  const {
+    data, // Paginated data
+    fetchNextPage, // Function to fetch the next page
+    hasNextPage, // Boolean to determine if there are more pages to load
+    isFetchingNextPage, // Boolean to show if the next page is being fetched
+    isLoading, // Boolean for loading state
+    error // Error handling
+  } = useInfiniteQuery({
+    queryKey: ['company', companyID],
+    queryFn: fetchCompanyDetails,
+    getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.nextPage : undefined, // Define the next page parameter
+    enabled: !!companyID
+  });
 
-  // Set up an event listener for scroll events
+  // Effect to trigger fetchNextPage when `inView` is true (when the bottom element is in view)
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading]);
+    if (inView && hasNextPage) {
+      fetchNextPage(); // Fetch the next page when the element is in view
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
+
+  if (isLoading) {
+    return <div>Loading1...</div>; // Show loading while fetching
+  }
+
+  if (error) {
+    return <div>Error loading companies...</div>; // Show error message if any error occurs
+  }
 
   return (
     <div className='min-h-screen bg-gray-100'>
-      <div className='flex justify-start w-[80%] text-base  mx-auto mt-8'>
-        <p>If You are the Employee of anyone below mentioned Company,
-          you can use the Company Id associated with their names
-          to register on this portal. your request will go the admin. he/she will verify.
+      <div className='flex justify-start w-[80%] text-base mx-auto mt-8'>
+        <p>
+          If You are the Employee of anyone below mentioned Company, you can use the Company Id associated with their names
+          to register on this portal. Your request will go to the admin, who will verify you.
         </p>
       </div>
       <div className='overflow-x-auto lg:mx-20 mt-8 pb-8'>
@@ -79,15 +68,14 @@ function CompanyID() {
               </thead>
               <tbody>
                 {
-                  companyData.length > 0 ? companyData.map((company, index) => (
-                    <tr key={index} className='text-center'>
-                      <td className='py-2 md:px-4 px-2 border-b'>{company.companyName}</td>
-                      <td className='py-2 md:px-4 px-2 border-b'>{company._id}</td>
-                    </tr>
-                  )) : (
-                    <tr>
-                      <td colSpan="2" className='py-2 px-4 border-b text-center'>No Registered Company Found</td>
-                    </tr>
+                  // Iterate over all the pages and map through their company data
+                  data?.pages?.map((page) =>
+                    page?.data?.map((company, index) => (
+                      <tr key={index} className='text-center'>
+                        <td className='py-2 md:px-4 px-2 border-b'>{company.companyName}</td>
+                        <td className='py-2 md:px-4 px-2 border-b'>{company._id}</td>
+                      </tr>
+                    ))
                   )
                 }
               </tbody>
@@ -95,7 +83,12 @@ function CompanyID() {
           </div>
         </div>
       </div>
-      {loading && <p>Loading more companies...</p>}
+      {/* Ref for infinite scrolling */}
+      {hasNextPage && (
+        <div ref={ref} className='flex justify-center mt-8'>
+          {isFetchingNextPage ? <div>Loading more companies...</div> : <div>Loading2...</div>}
+        </div>
+      )}
     </div>
   );
 }

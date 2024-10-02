@@ -11,6 +11,7 @@ app.use(cors({
     origin: "https://abuzar-bench-portal.netlify.app",
     methods: 'GET,POST,PUT,DELETE',
     credentials: true,
+    
 }));
 
 

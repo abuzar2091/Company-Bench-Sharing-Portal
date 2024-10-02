@@ -67,7 +67,7 @@ const registerUser = wrapAsyncHandler(async (req, res, next) => {
     
       const options = {
         httpOnly: true,
-        secure: true,
+       // secure: true,
       };
       return res
         .status(201)
@@ -110,7 +110,7 @@ const loginUser = wrapAsyncHandler(async (req, res) => {
   
     const options = {
       httpOnly: true,
-      secure: true,
+      //secure: true,
       sameSite: "None",
     };
     return res

@@ -44,18 +44,13 @@ function Header() {
         setMenuOpen(!menuOpen);
     };
    
-     
     const handleShowResource = (status) => {
         setFilter(status);
         toggleMenu();
         navigate('/');
     };
-   
-  
-    
- 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-red-50 shadow-lg">
             <div className="flex justify-between items-center p-4">
                 <Link to="/">
                     <img className="h-16 sm:ml-0 md:ml-4 ml-4" src="/images/logo4.png" alt="logo" />
@@ -74,8 +69,8 @@ function Header() {
                                 <NavLink
                                     to={item.redirection}
                                     className={({ isActive }) =>
-                                        `inline-block lg:px-6 md:px-2 py-2 duration-200 hover:bg-blue-100
-                                            rounded-full ${isActive ? "text-blue-700" : "text-gray-700"}`
+                                        `inline-block font-semibold lg:px-6 md:px-2 py-2 duration-200 hover:bg-blue-100
+                                            rounded-full ${isActive ? "text-red-700" : "text-black"}`
                                     }
                                 >
                                     {item.name}
@@ -85,13 +80,18 @@ function Header() {
                     )}
                     {isAuthenticated && (
                         <div className="flex items-start gap-4">
-                            <button onClick={handleSignOut} className="px-2 py-[6px]">
+                            <button onClick={handleSignOut} 
+                             className={
+                                `inline-block lg:px-6 px-2 py-[6px]  font-semibold  duration-200 hover:bg-blue-100
+                                    rounded-full "}`
+                            }
+                            >
                                 Sign out
                             </button>
                             <Link to="/my-profile">
                                 <div className="flex justify-center items-start gap-2 cursor-pointer">
                                     <button>
-                                        <p className="small-medium lg:base-medium py-1">My Account</p>
+                                        <p className="small-medium  font-semibold  lg:base-medium py-1">My Account</p>
                                     </button>
                                     <img
                                         src="/assets/icons/img_profile_24_outline.svg"
@@ -121,7 +121,7 @@ function Header() {
                                     to={item.redirection}
                                     className={({ isActive }) =>
                                         `inline-block px-4 py-2 duration-200 hover:bg-blue-100
-                                            rounded-full ${isActive ? "text-blue-700" : "text-gray-700"}`
+                                            rounded-full ${isActive ? "text-red-700" : "text-black"}`
                                     }
                                     onClick={toggleMenu}
                                 >
@@ -132,7 +132,13 @@ function Header() {
                     )}
                     {isAuthenticated && (
                         <div className="flex flex-col gap-4 items-start">
-                            <button onClick={(e) => { handleSignOut(e); toggleMenu(); }} className="ml-4 py-2">
+                            <button onClick={(e) => { handleSignOut(e); toggleMenu(); }} 
+                            //className="ml-4 py-2"
+                                   className={
+                                    `inline-block lg:px-6 px-2 py-[6px]  font-semibold  duration-200 hover:bg-blue-100
+                                        rounded-full "}`
+                                }
+                                >
                                 Sign out
                             </button>
                             <Link to="/my-profile" onClick={toggleMenu}>
@@ -153,13 +159,13 @@ function Header() {
                     {
                         <div className="flex flex-col gap-4">
                         <button
-                            className={`px-4 py-2 rounded ${pathname==="/" && filter === 'available' ? `text-blue-400` : ''}`}
+                            className={`px-4 py-2 rounded ${pathname==="/" && filter === 'available' ? `text-red-700` : ''}`}
                             onClick={() => handleShowResource('available')}
                         >
                             Available Resources
                         </button>
                         <button 
-                            className={`px-4 py-2 rounded ${pathname==="/" && filter === 'booked' ? `text-blue-400` : ''}  `}
+                            className={`px-4 py-2 rounded ${pathname==="/" && filter === 'booked' ? `text-red-700` : ''}  `}
                             onClick={() => handleShowResource('booked')}
                         >
                             Booked Resources
@@ -173,4 +179,6 @@ function Header() {
 }
 
 export default Header;
+
+
 

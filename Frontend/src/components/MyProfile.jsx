@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button } from './ui/button';
 import Loader from './Loader.jsx';
 import { useMessageContext } from '@/context/MessageContext';
+import { useQuery } from '@tanstack/react-query';
 axios.defaults.withCredentials = true;
 
 function MyProfile() {
-    const [isLoading,setIsLoading]=useState(true);
-    const [bookedResources, setBookedResources] = useState(null);
     const [selectedCounts, setSelectedCounts] = useState({});
     const [isReleasing,setIsReleasing]=useState(false);
     const { message, messageType,setMessage,setMessageType } = useMessageContext();
-    useEffect(() => {
-        const getBookedResource = async () => {
-            await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/getbookedresources`)
-                .then((res) => {
-                    setIsLoading(false);
-                        setBookedResources(res?.data?.data?.bookedResources);
-                
-                    console.log("response ",res);
-                })
-                .catch((err) => {
-                    console.log("errors here ",err);
-                });
-        }
-        getBookedResource();
-    }, []);
+   
+    const fetchBookedResources = async () => {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/getbookedresources`);
+        return response.data.data.bookedResources;
+      };
+      const {
+        data: bookedResources,
+        isLoading,
+        error,
+      } = useQuery({
+        queryKey: ['bookedResources'], // Unique key for this query
+        queryFn: fetchBookedResources, // Function that fetches the data
+        staleTime: 5 * 60 * 1000, // Data is considered fresh for 5 minutes (optional)
+        cacheTime: 10 * 60 * 1000, // Data remains in cache for 10 minutes after component unmounts (optional)
+        refetchOnWindowFocus: false, // Do not refetch when window gains focus (optional)
+      });
+
     const handleReleaseResource = async (resourceId, count) => {
         setIsReleasing(true);
         await axios.post(`${import.meta.env.VITE_BACKEND_API_URI}/api/v1/users/releaseresources`, { resourceId, count })
@@ -95,11 +95,10 @@ function MyProfile() {
       }, [message, setMessage]);
 
     if(isLoading){
-        return <div className='flex w-full min-h-screen justify-center bg-blue-100'>
+        return <div className='flex w-full min-h-screen justify-center '>
             <div className='flex gap-3'><Loader/> <p>Loading...</p></div>
         </div>
     }
-
     return (
         <div className='min-h-screen flex flex-col'>
             <h1 className='flex justify-center md:text-2xl text-lg font-semibold'>Your Booked Resource</h1>
@@ -109,9 +108,9 @@ function MyProfile() {
              )}
             <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 m-6">
                 {bookedResources?.length>0 && bookedResources?.map((booking, index) => (
-                    <div key={index} className='flex flex-col justify-between gap-2 text-white text-center sm:p-8 p-3 bg-blue-400 rounded-lg'>
-                        <p>Type: {booking.resourceDetails.type}</p>
-                        <p>Description: {booking.resourceDetails.description}</p>
+                    <div key={index} className='flex flex-col gap-4 bg-blue-100 p-4 text-center'>
+                        <h2 className="font-semibold text-[18px]">{booking.resourceDetails.type}</h2>
+                        <p>{booking.resourceDetails.description}</p>
                         <p>Booked Count: {booking.bookedResources.countToBook}</p>
                         <p>Booked At: {formatDate(booking.bookedResources.bookedAt)}</p>
                         <select
@@ -119,20 +118,20 @@ function MyProfile() {
                             onChange={(e) => handleSelectChange(booking.resourceDetails._id, e.target.value)}
                             className="border rounded p-2 text-black"
                         >
-                            <option value="" disabled>Select count</option>
+                            <option value="">Select count</option>
                             {[...Array(booking.bookedResources.countToBook).keys()].map(i => (
                                 <option key={i + 1} value={i + 1}>{i + 1}</option>
                             ))}
                         </select>
-                        <Button
+                        <button
                             onClick={() => handleReleaseResource(booking.resourceDetails._id, selectedCounts[booking.resourceDetails._id])}
                           disabled={!selectedCounts[booking.resourceDetails._id]}
                           //className="flex gap-2"
+                           className={`${selectedCounts[booking.resourceDetails._id]?`bg-black`:`bg-black opacity-50`} p-2 font-bold cursor-pointer text-white rounded-sm`}
                         > {
-                            selectedCounts[booking.resourceDetails._id] && isReleasing ?(<div className='flex gap-2'><Loader/> Releasing...</div>):(<div>Release</div>)
-
+                            selectedCounts[booking.resourceDetails._id] && isReleasing ?(<div className='flex gap-2 justify-center'><Loader/> Releasing...</div>):(<div>Release</div>)
                         }
-                        </Button>
+                        </button>
                     </div>
                 ))}
             </div>
