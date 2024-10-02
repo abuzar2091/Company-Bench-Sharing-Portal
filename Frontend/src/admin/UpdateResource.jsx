@@ -124,7 +124,7 @@ function UpdateResource() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="bg-blue-500">
+                <Button type="submit" className="bg-black">
                   {submitForm ? (
                     <div className="flex gap-2">
                       <Loader />

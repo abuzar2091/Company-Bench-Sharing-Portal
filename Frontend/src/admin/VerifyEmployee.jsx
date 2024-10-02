@@ -53,7 +53,7 @@ function VerifyEmployee() {
         {userList?.map((user) => (
           <div
             key={user._id}
-            className="flex flex-col sm:gap-3 gap-1 bg-blue-400 text-md text-white     rounded-lg justify-around md:p-4 p-3"
+            className="flex flex-col sm:gap-3 gap-1 bg-blue-100 text-md   rounded-lg justify-around md:p-4 p-3"
           >
             <h3>username: {user.username}</h3>
             <p>email: {user.email}</p>

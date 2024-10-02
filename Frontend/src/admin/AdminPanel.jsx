@@ -41,8 +41,8 @@ function AdminPanel() {
       <h1 className="text-center font-semibold text-3xl">Admin Panel</h1>
        <div className='flex justify-between  xs:flex-row flex-col'>
 
-      <div className='flex flex-col bg-blue-300 sm:w-[40%] h-[200px] sm:ml-4  w-[50%] ml-4 rounded-lg justify-around'>
-      <h2 className='text-white font-semibold text-center'>Unverified Users Request {unverifiedUser?.data?.length}</h2>
+      <div className='flex flex-col bg-blue-100 sm:w-[40%] h-[200px] sm:ml-4  w-[50%] ml-4 rounded-lg justify-around'>
+      <h2 className=' font-semibold text-center'>Unverified Users Request {unverifiedUser?.data?.length}</h2>
       <Button onClick={handleVerifyUser}>Verify User</Button>
       </div>
 

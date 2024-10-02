@@ -1,4 +1,5 @@
 import HomePage from '@/components/HomePage';
+import ToBecomeAdminForm from '@/components/ToBecomeAdminForm';
 import Footer from '@/share/Footer';
 import Header from '@/share/Header';
 import React from 'react'
@@ -10,6 +11,7 @@ function RootLayout() {
         <section>
         <Outlet/> 
         </section>
+        <ToBecomeAdminForm/>
         <Footer/>
 
     </div>

@@ -86,14 +86,14 @@ function SeeAllResource() {
         <div className='grid lg:grid-cols-3 sm:grid-cols-2 gap-4 xs:m-8 m-6'>
         {
           addedResource?.map((resource)=>(
-                <div key={resource?._id} className='flex flex-col gap-2 text-white text-center sm:p-8  p-3 bg-blue-400 rounded-lg justify-between'>
-                  <p>Type: {resource.type}</p>
-                  <p>Description: {resource.description}</p>
+                <div key={resource?._id} className='flex flex-col gap-2  text-center sm:p-8  p-3 bg-blue-100 rounded-lg justify-between'>
+                  <p className="font-semibold text-[18px]">{resource.type}</p>
+                  <p>{resource.description}</p>
                   <p>Count: {resource.count}</p>
                   <p>Status: {resource.status}</p>
                   <div className='flex justify-between'>
-                  <button onClick={()=>updateResource({resource})} className='bg-green-600 rounded-lg py-2 px-4'>Update</button>
-                  <Button onClick={()=>deleteResource(resource?._id)}>Delete</Button>
+                  <button   onClick={()=>updateResource({resource})} className='bg-green-600 rounded-lg py-2 font-bold px-4'>Update</button>
+                  <Button className="font-bold" onClick={()=>deleteResource(resource?._id)}>Delete</Button>
                   </div>
                 </div>
             ))
