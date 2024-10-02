@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useInView } from "react-intersection-observer";
-import Loader from './Loader';
+import Loader from './Loader.jsx';
 import { useNavigate } from 'react-router-dom';
 axios.defaults.withCredentials = true;
 function ShowResources() {
@@ -46,7 +46,7 @@ function ShowResources() {
   if (isLoading) {
     return (
       <>
-        wait rakho
+        wait loading...
       </>
     );
   }
@@ -127,5 +127,4 @@ function ShowResources() {
     </>
   );
 }
-
 export default ShowResources;

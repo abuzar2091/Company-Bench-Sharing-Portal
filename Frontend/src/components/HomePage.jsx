@@ -1,5 +1,5 @@
 import React from 'react'
-import ShowResources from './ShowResources'
+import ShowResources from './ShowResources.jsx'
 
 function HomePage() {
   return (
